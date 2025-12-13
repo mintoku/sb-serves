@@ -4,6 +4,7 @@ import ListingCard from "@/app/components/search/ListingCard";
 import SearchBar from "@/app/components/search/SearchBar";
 import { headers } from "next/headers";
 
+
 /**
  * Search results page (Server Component)
  * -------------------------------------
@@ -42,37 +43,37 @@ export default async function SearchPage({searchParams,}: {
     throw new Error("Failed to fetch sellers");
   }
 
-  // UNCOMMENT LATER --commented for debugging
   const sellers = await res.json();
-  // const json = await res.json(); // FOR DEBUGGING (deletee later)
-  // const sellers = json.sellers ?? []; // <-- IMPORTANT: now we read from json.sellers (ALSO DELETE LATE)
-
+ 
 
   /**
    * Render the page
    */
   return (
-    <main style={{ padding: 24 }}>
-      <h1 style={{ marginBottom: 12 }}>Search Results</h1>
-
-      {/* Search bar (prefilled with current query) */}
-      <div style={{ marginBottom: 20 }}>
-        <SearchBar initialQuery={q} />
-      </div>
-
-      {/* Seller results */}
-      <div style={{ display: "grid", gap: 16 }}>
-        {sellers.map((seller: any) => (
-          <ListingCard key={seller.id} seller={seller} />
-        ))}
-      </div>
+   <main className="mx-auto max-w-6xl px-6 py-10">
+      {/* Page title */}
+      <h1 className="mb-6 text-2xl font-bold">
+        Results for "{q}"
+      </h1>
 
       {/* Empty state */}
-      {sellers.length === 0 && (
-        <p style={{ marginTop: 16, opacity: 0.8 }}>
-          No results found.
+      {(!sellers || sellers.length === 0) && (
+        <p className="text-gray-500">
+          No services found.
         </p>
       )}
+
+      {/* Results grid */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {sellers?.map((seller) => (
+          <ListingCard
+            key={seller.id}
+            name={seller.name}
+            service={seller.service}
+            bio={seller.bio}
+          />
+        ))}
+      </div>
     </main>
   );
 }
