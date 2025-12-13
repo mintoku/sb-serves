@@ -45,16 +45,10 @@ export async function GET(request: Request) {
     reviewCount: row.review_count ?? undefined,
     photos: row.photos ?? undefined,
     bio: row.bio ?? undefined,
+    services: row.services ?? [],
 
-    // services could be string[] (ideal) or string depending on how your DB column is defined
-    services: Array.isArray(row.services)
-      ? row.services
-      : typeof row.services === "string"
-        ? row.services.split(",").map((s: string) => s.trim()).filter(Boolean)
-        : [],
-
-    instagramHandle: row.instagram_handle ?? undefined,
-    instagramPostUrls: row.instagram_post_urls ?? undefined,
+    instagramHandle: row.instagram_handle ?? [],
+    instagramPostUrls: row.instagram_post_urls ?? [],
   }));
 
   /**

@@ -8,6 +8,8 @@
  */
 
 import "./globals.css";
+import SiteHeader from "@/app/components/nav/SiteHeader";
+
 
 export const metadata = {
   title: "SB Serves",
