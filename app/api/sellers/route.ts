@@ -1,68 +1,52 @@
+// app/api/sellers/route.ts
+
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/client";
+import { supabase } from "@/lib/supabase/client";
 
-type Seller = {
-  id: string;
-  name: string | null;
-  bio: string | null;
-  location_area: string | null;
-  portfolio_url: string | null;
-  created_at: string | string;
-};
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const q = searchParams.get("q")?.toLowerCase().trim() ?? "";
 
-type Service = {
-  id: string;
-  seller_id: string;
-  type: string | null;
-  price_from: number | null;
-  created_at: string | null;
-};
+  // fetch seller profiles with related services
+  const { data, error } = await supabase
+    .from("seller_profiles")
+    .select(
+      `
+      id,
+      name,
+      bio,
+      portfolio_url,
+      services (
+        service_type,
+        price_from
+      )
+    `
+    );
 
-export async function GET() {
-  try {
-    const supabase = createClient();
-
-    // 1) Get sellers
-    const { data: sellers, error: sellersError } = await supabase
-      .from("seller_profiles")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (sellersError) {
-      return NextResponse.json({ error: sellersError.message }, { status: 500 });
-    }
-
-    // 2) Get services
-    const { data: services, error: servicesError } = await supabase
-      .from("services")
-      .select("*");
-
-    if (servicesError) {
-      return NextResponse.json({ error: servicesError.message }, { status: 500 });
-    }
-
-    // 3) Merge: attach services to each seller
-    const servicesBySeller = new Map<string, Service[]>();
-    (services ?? []).forEach((svc: any) => {
-      const s = svc as Service;
-      const arr = servicesBySeller.get(s.seller_id) ?? [];
-      arr.push(s);
-      servicesBySeller.set(s.seller_id, arr);
-    });
-
-    const combined = (sellers ?? []).map((seller: any) => {
-      const s = seller as Seller;
-      return {
-        ...s,
-        services: servicesBySeller.get(s.id) ?? [],
-      };
-    });
-
-    return NextResponse.json({ sellers: combined });
-  } catch (err: any) {
+  if (error) {
     return NextResponse.json(
-      { error: err?.message ?? "Unknown error" },
+      { error: error.message },
       { status: 500 }
     );
   }
+
+  // If no query, return everything (as an array)
+  if (!q) {
+    return NextResponse.json(data ?? []);
+  }
+
+  // Otherwise filter
+  const filtered = (data ?? []).filter((seller) => {
+    const nameMatch = seller.name.toLowerCase().includes(q);
+    const bioMatch = seller.bio?.toLowerCase().includes(q) ?? false;
+
+    const serviceMatch = seller.services?.some((service: any) =>
+      service.service_type.toLowerCase().includes(q)
+    );
+
+    return nameMatch || bioMatch || serviceMatch;
+  });
+
+  // **Return the filtered array directly**
+  return NextResponse.json(filtered);
 }

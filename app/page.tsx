@@ -1,6 +1,6 @@
 // app/page.tsx
 
-import SearchBar from "./components/search/SearchBar";
+import SearchBar from "@/app/components/search/SearchBar";
 
 export default function HomePage() {
   return (
@@ -8,7 +8,7 @@ export default function HomePage() {
       <h1>sb serves</h1>
 
       <SearchBar />
-      <p> Sorry! We couldn't find anything.</p>
+      <p> Welcome to SB serves.</p>
     </main>
   );
 }

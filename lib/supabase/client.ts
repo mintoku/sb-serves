@@ -1,12 +1,9 @@
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+// lib/supabase/client.ts
 
-export function createClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+import { createClient } from "@supabase/supabase-js";
 
-  if (!url || !key) {
-    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local");
-  }
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-  return createSupabaseClient(url, key);
-}
+// Create a single Supabase client for use throughout your app
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
