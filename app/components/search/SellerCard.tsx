@@ -1,32 +1,29 @@
 // app/components/search/SellerCard.tsx
 
-type Seller = {
-  id: string;
-  name: string;
-  tagline?: string;
-  locationText?: string;
-  priceStart?: number;
-  rating?: number;
-  reviewCount?: number;
+import type { Seller } from "./SearchShell";
 
-  // NEW: small gallery strip shown under the name
-  photos?: string[]; // array of image URLs
-};
+function normalizeIgPosts(value: unknown): string[] {
+  // In case something passes jsonb-ish data or nulls
+  if (!Array.isArray(value)) return [];
+  return value.filter((x): x is string => typeof x === "string" && x.length > 0);
+}
 
 export default function SellerCard({ seller }: { seller: Seller }) {
-  const photos = seller.photos ?? [];
+  const igPosts = normalizeIgPosts(seller.instagramPostUrls);
+
+  const profileUrl = seller.instagramHandle
+    ? `https://www.instagram.com/${seller.instagramHandle}/`
+    : undefined;
 
   return (
     <article className="rounded-2xl border bg-white p-4 shadow-sm transition hover:shadow-md">
       <div className="flex gap-4">
-        {/* Avatar */}
+        {/* Avatar (placeholder for now) */}
         <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-neutral-200">
-          {/* Replace with next/image later */}
-          <img
-            src={photos[0] ?? "https://placehold.co/200x200"}
-            alt={`${seller.name} profile`}
-            className="h-full w-full object-cover"
-          />
+          {/* Later: you can swap this for a real image */}
+          <div className="flex h-full w-full items-center justify-center text-xs text-neutral-500">
+            SB
+          </div>
         </div>
 
         {/* Main content */}
@@ -37,31 +34,55 @@ export default function SellerCard({ seller }: { seller: Seller }) {
                 {seller.name}
               </h3>
 
-              {/* Photo strip directly under name */}
-              {photos.length > 1 && (
-                <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
-                  {photos.slice(0, 5).map((url, idx) => (
-                    <div
-                      key={idx}
-                      className="h-12 w-16 shrink-0 overflow-hidden rounded-xl bg-neutral-200"
-                      title={`Photo ${idx + 1}`}
+              {/* Instagram mini-strip under name (lightweight) */}
+              {(profileUrl || igPosts.length > 0) && (
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  {profileUrl && (
+                    <a
+                      href={profileUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-xs font-medium text-neutral-700 hover:bg-neutral-100"
+                      title="Open Instagram profile"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <img
-                        src={url}
-                        alt={`${seller.name} photo ${idx + 1}`}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
+                      @{seller.instagramHandle}
+                    </a>
+                  )}
+
+                  {/* “Top posts” quick links (not embeds) */}
+                  {igPosts.slice(0, 3).map((url, idx) => (
+                    <a
+                      key={url}
+                      href={url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-full border border-neutral-200 bg-white px-2.5 py-1 text-xs text-neutral-600 hover:bg-neutral-50"
+                      title={`Open Instagram post ${idx + 1}`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      IG post {idx + 1} ↗
+                    </a>
                   ))}
+
+                  {igPosts.length > 3 && (
+                    <span className="text-xs text-neutral-500">
+                      +{igPosts.length - 3} more
+                    </span>
+                  )}
                 </div>
               )}
 
-              {seller.tagline && (
-                <p className="mt-2 text-sm text-neutral-700">{seller.tagline}</p>
+              {seller.locationText && (
+                <p className="mt-2 text-sm text-neutral-500">
+                  {seller.locationText}
+                </p>
               )}
 
-              {seller.locationText && (
-                <p className="mt-1 text-sm text-neutral-500">{seller.locationText}</p>
+              {seller.bio && (
+                <p className="mt-2 line-clamp-2 text-sm text-neutral-700">
+                  {seller.bio}
+                </p>
               )}
             </div>
 
@@ -77,14 +98,19 @@ export default function SellerCard({ seller }: { seller: Seller }) {
           </div>
 
           {/* Rating row */}
-          <div className="mt-3 flex items-center gap-2 text-sm text-neutral-700">
-            {typeof seller.rating === "number" && (
-              <span className="font-medium">⭐ {seller.rating.toFixed(1)}</span>
-            )}
-            {typeof seller.reviewCount === "number" && (
-              <span className="text-neutral-500">• {seller.reviewCount} reviews</span>
-            )}
-          </div>
+          {(typeof seller.rating === "number" ||
+            typeof seller.reviewCount === "number") && (
+            <div className="mt-3 flex items-center gap-2 text-sm text-neutral-700">
+              {typeof seller.rating === "number" && (
+                <span className="font-medium">⭐ {seller.rating.toFixed(1)}</span>
+              )}
+              {typeof seller.reviewCount === "number" && (
+                <span className="text-neutral-500">
+                  • {seller.reviewCount} reviews
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </article>

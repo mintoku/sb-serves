@@ -4,22 +4,18 @@ import { useMemo, useState } from "react";
 import SellerCard from "@/./app/components/search/SellerCard";
 import SellerPreviewPanel from "@/./app/components/search/SellerPreviewPanel";
 
-/**
- * Shared seller type (UI-level)
- * Keep this aligned with /api/sellers output
- */
 export type Seller = {
   id: string;
   name: string;
+  bio?: string;
+  services?: string[];
   locationText?: string;
   priceStart?: number;
   rating?: number;
   reviewCount?: number;
-  photos?: string[];
 
-  bio?: string;
-  services?: string[];
   instagramHandle?: string;
+  instagramPostUrls?: string[];
 };
 
 export default function SearchShell({ sellers }: { sellers: Seller[] }) {

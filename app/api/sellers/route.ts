@@ -24,7 +24,8 @@ export async function GET(request: Request) {
     photos,
     bio,
     services,
-    instagram_handle
+    instagram_handle,
+    instagram_post_urls
   `);
 
   if (error) {
@@ -53,6 +54,7 @@ export async function GET(request: Request) {
         : [],
 
     instagramHandle: row.instagram_handle ?? undefined,
+    instagramPostUrls: row.instagram_post_urls ?? undefined,
   }));
 
   /**
