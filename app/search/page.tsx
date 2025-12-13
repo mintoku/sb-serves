@@ -13,19 +13,17 @@ import { headers } from "next/headers";
  * - Fetches seller data from /api/sellers
  */
 
-export default async function SearchPage({
-  searchParams,
-}: {
+export default async function SearchPage({searchParams,}: {
   searchParams: { q?: string };
 }) {
   /**
-   * 1️⃣ Read the search query from the URL
+   * Read the search query from the URL
    * Example URL: /search?q=nails
    */
   const q = searchParams?.q ?? "";
 
   /**
-   * 2️⃣ Build an ABSOLUTE URL for server-side fetch
+   * Build an ABSOLUTE URL for server-side fetch
    * Server components do NOT support relative URLs like "/api/..."
    */
   const headersList = headers();
@@ -33,25 +31,25 @@ export default async function SearchPage({
   const protocol =
     process.env.NODE_ENV === "development" ? "http" : "https";
 
-  const url = `${protocol}://${host}/api/sellers?q=${encodeURIComponent(
-    q
-  )}`;
+  const url = `${protocol}://${host}/api/sellers?q=${encodeURIComponent(q)}`;
 
   /**
-   * 3️⃣ Fetch sellers from API route
+   * Fetch sellers from API route
    */
-  const res = await fetch(url, {
-    cache: "no-store", // always fetch fresh results
-  });
+  const res = await fetch(url, { cache: "no-store", }); // always fetch fresh results
 
   if (!res.ok) {
     throw new Error("Failed to fetch sellers");
   }
 
+  // UNCOMMENT LATER --commented for debugging
   const sellers = await res.json();
+  // const json = await res.json(); // FOR DEBUGGING (deletee later)
+  // const sellers = json.sellers ?? []; // <-- IMPORTANT: now we read from json.sellers (ALSO DELETE LATE)
+
 
   /**
-   * 4️⃣ Render the page
+   * Render the page
    */
   return (
     <main style={{ padding: 24 }}>
