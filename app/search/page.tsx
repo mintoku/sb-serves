@@ -1,78 +1,65 @@
 // app/search/page.tsx
-
-import ListingCard from "@/app/components/search/ListingCard";
+import FiltersPanel from "@/app/components/search/FiltersPanel";
+import SearchShell from "@/app/components/search/SearchShell";
 import SearchBar from "@/app/components/search/SearchBar";
 import { headers } from "next/headers";
 
-
-/**
- * Search results page (Server Component)
- * -------------------------------------
- * - Uses Next.js App Router
- * - Runs on the SERVER by default
- * - Receives URL query params via `searchParams`
- * - Fetches seller data from /api/sellers
- */
-
-export default async function SearchPage({searchParams,}: {
+export default async function SearchPage({
+  searchParams,
+}: {
   searchParams: { q?: string };
 }) {
-  /**
-   * Read the search query from the URL
-   * Example URL: /search?q=nails
-   */
   const q = searchParams?.q ?? "";
 
-  /**
-   * Build an ABSOLUTE URL for server-side fetch
-   * Server components do NOT support relative URLs like "/api/..."
-   */
   const headersList = headers();
-  const host = headersList.get("host"); // ex: "localhost:3000"
-  const protocol =
-    process.env.NODE_ENV === "development" ? "http" : "https";
+
+  // More robust in dev + when deployed behind proxies
+  const forwardedHost = headersList.get("x-forwarded-host");
+  const forwardedProto = headersList.get("x-forwarded-proto");
+
+  const host = forwardedHost ?? headersList.get("host");
+  const protocol = forwardedProto ?? (process.env.NODE_ENV === "development" ? "http" : "https");
+
+  if (!host) {
+    throw new Error("Missing Host header — cannot build absolute URL for /api/sellers");
+  }
 
   const url = `${protocol}://${host}/api/sellers?q=${encodeURIComponent(q)}`;
 
-  /**
-   * Fetch sellers from API route
-   */
-  const res = await fetch(url, { cache: "no-store", }); // always fetch fresh results
+  const res = await fetch(url, { cache: "no-store" });
 
   if (!res.ok) {
-    throw new Error("Failed to fetch sellers");
+    const bodyText = await res.text().catch(() => "");
+    throw new Error(
+      `Failed to fetch sellers: ${res.status} ${res.statusText}\nURL: ${url}\nBody: ${bodyText.slice(0, 500)}`
+    );
   }
 
-  const sellers = await res.json();
- 
+  const { sellers } = await res.json();
 
-  /**
-   * Render the page
-   */
+
   return (
-   <main className="mx-auto max-w-6xl px-6 py-10">
-      {/* Page title */}
-      <h1 className="mb-6 text-2xl font-bold">
-        Results for "{q}"
-      </h1>
+    <main className="min-h-screen bg-neutral-50">
+      <div className="mx-auto max-w-[1600px] px-4 py-6">
 
-      {/* Empty state */}
-      {(!sellers || sellers.length === 0) && (
-        <p className="text-gray-500">
-          No services found.
-        </p>
-      )}
+        {/* 🔍 SEARCH BAR */}
+        <div className="mb-6">
+          <SearchBar initialQuery={q} />
+        </div>
 
-      {/* Results grid */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {sellers?.map((seller) => (
-          <ListingCard
-            key={seller.id}
-            name={seller.name}
-            service={seller.service}
-            bio={seller.bio}
-          />
-        ))}
+        <div className="grid grid-cols-12 gap-6">
+          {/* LEFT */}
+          <aside className="col-span-12 lg:col-span-3">
+            <div className="sticky top-6">
+              <FiltersPanel />
+            </div>
+          </aside>
+
+          {/* MIDDLE + RIGHT */}
+          <section className="col-span-12 lg:col-span-9">
+            <SearchShell sellers={sellers} />
+          </section>
+        </div>
       </div>
     </main>
   );

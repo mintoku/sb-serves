@@ -1,103 +1,89 @@
-// // app/api/sellers/route.ts
+// app/api/sellers/route.ts
 
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase/client"; // change back to client later
+import { supabase } from "@/lib/supabase/client"; // NOTE: ideally use a server supabase client later
 
 export async function GET(request: Request) {
+  /**
+   * Read query from URL: /api/sellers?q=hair
+   */
   const { searchParams } = new URL(request.url);
   const q = searchParams.get("q")?.toLowerCase().trim() ?? "";
 
-  // fetch seller profiles with related services
-  const { data, error } = await supabase
-    .from("seller_profiles")
-    .select(
-      `
-      id,
-      name,
-      bio,
-      portfolio_url,
-      service_offered
-    `
-    );
+  /**
+   * Fetch sellers from Supabase.
+   * IMPORTANT: .select() must be a list of column names (no TypeScript types).
+   */
+  const { data, error } = await supabase.from("seller_profiles").select(`
+    id,
+    name,
+    location_text,
+    price_start,
+    rating,
+    review_count,
+    photos,
+    bio,
+    services,
+    instagram_handle
+  `);
 
   if (error) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // If no query, return everything (as an array)
+  /**
+   * Map DB row shape (snake_case) -> UI/API shape (camelCase)
+   * This keeps your frontend consistent with the Seller type in SearchShell.
+   */
+  const sellers = (data ?? []).map((row: any) => ({
+    id: row.id,
+    name: row.name,
+    locationText: row.location_text ?? undefined,
+    priceStart: row.price_start ?? undefined,
+    rating: row.rating ?? undefined,
+    reviewCount: row.review_count ?? undefined,
+    photos: row.photos ?? undefined,
+    bio: row.bio ?? undefined,
+
+    // services could be string[] (ideal) or string depending on how your DB column is defined
+    services: Array.isArray(row.services)
+      ? row.services
+      : typeof row.services === "string"
+        ? row.services.split(",").map((s: string) => s.trim()).filter(Boolean)
+        : [],
+
+    instagramHandle: row.instagram_handle ?? undefined,
+  }));
+
+  /**
+   * If no query, return all sellers
+   */
   if (!q) {
-    return NextResponse.json(data ?? []);
+    return NextResponse.json({ sellers });
   }
 
-  // Otherwise filter
-  const filtered = (data ?? []).filter((seller) => {
-    const nameMatch = seller.name.toLowerCase().includes(q);
-    const bioMatch = seller.bio?.toLowerCase().includes(q) ?? false;
+  /**
+   * Otherwise, filter on:
+   * - name
+   * - bio
+   * - services (array or string)
+   */
+  const filtered = sellers.filter((seller: any) => {
+    const nameMatch = (seller.name ?? "").toLowerCase().includes(q);
+    const bioMatch = (seller.bio ?? "").toLowerCase().includes(q);
 
-    const serviceMatch = seller.service_offered.toLowerCase().includes(q) ?? false;
+    const services = seller.services;
+
+    // Handle string[] OR string
+    const serviceMatch =
+      Array.isArray(services)
+        ? services.some((s: string) => (s ?? "").toLowerCase().includes(q))
+        : typeof services === "string"
+          ? services.toLowerCase().includes(q)
+          : false;
+
     return nameMatch || bioMatch || serviceMatch;
   });
 
-  // **Return the filtered array directly**
-  return NextResponse.json(filtered);
+  return NextResponse.json({ sellers: filtered });
 }
-// BELOW FOR DEBUGGING
-// // app/api/sellers/route.ts
-// import { NextResponse } from "next/server";
-// import { supabaseServer } from "@/lib/supabase/server";
-
-// export async function GET(request: Request) {
-//   const { searchParams } = new URL(request.url);
-//   const q = (searchParams.get("q") ?? "").trim();
-
-//   /**
-//    * Build the base query.
-//    * We select only the fields our UI needs.
-//    */
-//   let query = supabaseServer
-//     .from("seller_profiles")
-//     .select("id, name, bio, portfolio_url, service_offered");
-
-//   /**
-//    * If there's a search query, filter in the DATABASE (faster + cleaner)
-//    * ilike = case-insensitive pattern match
-//    * .or() lets us search across multiple columns
-//    */
-//   if (q.length > 0) {
-//     const pattern = `%${q}%`;
-//     query = query.or(
-//       `name.ilike.${pattern},bio.ilike.${pattern},service_offered.ilike.${pattern}`
-//     );
-//   }
-
-//   const { data, error } = await query;
-
-//   /**
-//    * If Supabase errors, return a 500 with details.
-//    * (This helps a TON while debugging.)
-//    */
-//   if (error) {
-//     return NextResponse.json(
-//       {
-//         error: error.message,
-//         hint: error.hint,
-//         details: error.details,
-//       },
-//       { status: 500 }
-//     );
-//   }
-
-//   /**
-//    * Extra debug info (safe to keep for now):
-//    * - how many rows we got back
-//    * - what query string was used
-//    */
-//   return NextResponse.json({
-//     count: data?.length ?? 0,
-//     q,
-//     sellers: data ?? [],
-//   });
-// }

@@ -54,7 +54,7 @@ export default function SearchBar({ initialQuery }: { initialQuery: string }) {
           maxWidth: 520,
           padding: "10px 12px",
           borderRadius: 10,
-          border: "1px solid rgba(255,255,255,0.2)",
+          border: "3px solid rgba(0, 89, 65, 0.2)",
           background: "transparent",
         }}
         // Press Enter to search

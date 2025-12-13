@@ -1,1 +1,1 @@
-Cosmetic focused student-to-student service marketplace for gauchos. Users can browse through haircuts, nails, brows, and more services offered by their peers.
+For UCSB students looking for aesthetic services from other gauchos. See which of your classmates cut hair, do nails, trim brows, does lashes, etc!
