@@ -34,7 +34,6 @@ export async function GET(request: Request) {
 
   /**
    * Map DB row shape (snake_case) -> UI/API shape (camelCase)
-   * This keeps your frontend consistent with the Seller type in SearchShell.
    */
   const sellers = (data ?? []).map((row: any) => ({
     id: row.id,

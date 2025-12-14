@@ -1,10 +1,7 @@
 /**
- * Root Layout
- * -----------
- * This wraps EVERY page in the app automatically.
- * - Global CSS goes here
- * - Fonts go here
- * - Navbar / footer live here
+ * root layout
+ * wraps every page in the app automatically
+ * make a footer eventually
  */
 
 import "./globals.css";
@@ -25,7 +22,7 @@ const playfair = Playfair_Display({
 
 export const metadata = {
   title: "sb serves",
-  description: "Find trusted UCSB student services",
+  description: "Find trusted UCSB student services. For UCSB students looking for aesthetic services from other gauchos. For finding the hidden talent of gaucho haircutters, nail techs, eyebrow threaders, lash experts and more!",
 };
 
 export default function RootLayout({

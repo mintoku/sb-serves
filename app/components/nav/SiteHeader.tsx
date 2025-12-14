@@ -1,27 +1,71 @@
-// app/components/nav/SiteHeader.tsx
+"use client"; /* for interactivity */
+/* top of page */
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase/client";
 
 export default function SiteHeader() {
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Initial session check
+    supabase.auth.getSession().then(({ data }) => {
+      setLoggedIn(!!data.session);
+    });
+
+    // Listen for auth changes (login / logout)
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setLoggedIn(!!session);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur">
       <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4">
         {/* Brand */}
-        <Link href="/" className="font-prata text-2xl tracking-wide
- text-cyan-900 font-semibold hover:text-black p-3 border-1 border-cyan-100 bg-blue-50 rounded-lg">
+        <Link
+          href="/"
+          className="text-2xl tracking-wide text-cyan-900 font-semibold hover:text-black p-3 border-1 border-cyan-100 bg-blue-50 rounded-lg"
+        >
           sb serves
         </Link>
-        
 
         {/* Nav links */}
         <nav className="flex items-center gap-5 text-sm text-neutral-700">
-          <Link href="/search" className="hover:text-black p-2 border-2 border-blue-50 bg-blue-50 rounded-lg">
-            Browse
+          <Link
+            href="/search"
+            className="hover:text-black p-2 border-2 border-blue-50 bg-blue-50 rounded-lg"
+          >
+            Explore services
           </Link>
-          <Link href="/seller-signup" className="hover:text-red p-2 border-2 border-blue-50 bg-blue-50 rounded-lg">
-            Become a seller
-          </Link>
-          <Link href="/about" className="hover:text-black p-2 border-2 border-blue-50 bg-blue-50 rounded-lg">
-            About
+
+          {loggedIn ? (
+            <Link
+              href="/dashboard"
+              className="hover:text-black p-2 border-2 border-blue-50 bg-blue-50 rounded-lg"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <Link
+              href="/signin"
+              className="hover:text-black p-2 border-2 border-blue-50 bg-blue-50 rounded-lg"
+            >
+              Seller login / signup
+            </Link>
+          )}
+
+          <Link
+            href="/issue"
+            className="hover:text-black p-2 border-2 border-blue-50 bg-blue-50 rounded-lg"
+          >
+            Report an issue
           </Link>
         </nav>
       </div>

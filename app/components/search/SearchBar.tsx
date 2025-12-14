@@ -1,20 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"; /* lets us "push" (navigate) to next page*/
 
 /**
- * SearchBar (Client Component)
- * ----------------------------
- * - Lets the user type a query
- * - On Enter OR button click, navigates to /search?q=...
- * - The SearchPage server component will see the new q and refetch results
+ * client componenent
+ * - on Enter OR button click, navigates to /search?q=...
+ * - SearchPage server component will see the new q and refetch results
  */
 
 export default function SearchBar({ initialQuery }: { initialQuery: string }) {
   const router = useRouter();
 
-  // Local input state (what the user is typing)
+  // user's query ("" if none)
   const [query, setQuery] = useState(initialQuery ?? "");
 
   /**
@@ -31,10 +29,7 @@ export default function SearchBar({ initialQuery }: { initialQuery: string }) {
   function runSearch() {
     const trimmed = query.trim();
 
-    // If empty, you can choose behavior:
-    // Option A: go to /search with no q (shows all sellers or empty depending on your API)
-    // Option B: stay put (do nothing)
-    // We'll do Option A:
+    // If empty, go to /search with no q (shows all sellers or empty depending on your API)
     if (!trimmed) {
       router.push("/search");
       return;
@@ -57,7 +52,7 @@ export default function SearchBar({ initialQuery }: { initialQuery: string }) {
           border: "3px solid rgba(0, 89, 65, 0.2)",
           background: "transparent",
         }}
-        // Press Enter to search
+        // press enter to search
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault(); // prevents form submit refresh

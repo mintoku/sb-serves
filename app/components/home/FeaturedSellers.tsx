@@ -1,19 +1,18 @@
 // app/components/home/FeaturedSellers.tsx
 
 import ListingCard from "@/app/components/search/SellerProfile";
-import { headers } from "next/headers";
+import { headers } from "next/headers"; /* to get host (www.example.com to build url later*/
 
 /**
  * Featured sellers section
  * - Reuses existing ListingCard
- * - Server Component (fast, simple)
  */
 export default async function FeaturedSellers({
-  limit = 4,
+  limit = 6,
 }: {
   limit?: number;
 }) {
-  // Build absolute URL (required for server components)
+  // build absolute URL (required for server components)
   const headersList = headers();
   const host = headersList.get("host");
   const protocol =

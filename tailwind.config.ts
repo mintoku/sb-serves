@@ -10,9 +10,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        // sans: ["var(--font-inter)", "ui-sans-serif", "system-ui"],
-        // serif: ["var(--font-playfair)", "ui-serif", "Georgia"],
-        sans: ["var(--font-nunito)", "ui-sans-serif", "system-ui"],
+        sans: ["var(--font-inter)", "ui-sans-serif", "system-ui"],
+        serif: ["var(--font-playfair)", "ui-serif", "Georgia"],
       },
     },
   },
