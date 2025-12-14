@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import SellerCard from "@/./app/components/search/SellerCard";
-import SellerPreviewPanel from "@/./app/components/search/SellerPreviewPanel";
+import SellerPreviewPanel from "@/app/components/search/SellerProfile";
 
 export type Seller = {
   id: string;

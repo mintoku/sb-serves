@@ -38,6 +38,20 @@ export default function SellerPreviewPanel({
   return (
     <div className="rounded-2xl border bg-white p-6 shadow-sm space-y-4">
       <h2 className="text-2xl font-semibold">{seller.name}</h2>
+      
+      {seller.services && (
+        <span className="mt-2 inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+          {seller.services}
+        </span>
+      )}
+
+      {seller.locationText && (
+        <div className="mt-2">
+          <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-600">
+            📍 {seller.locationText}
+          </span>
+        </div>
+      )}
 
       {seller.bio && <p className="text-neutral-700">{seller.bio}</p>}
 
@@ -51,7 +65,7 @@ export default function SellerPreviewPanel({
           rel="noreferrer"
           className="inline-block text-sm font-medium text-emerald-600 hover:underline"
         >
-          View Instagram →
+          @{igHandle}
         </a>
       ) : null}
 

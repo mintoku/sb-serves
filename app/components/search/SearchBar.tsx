@@ -72,12 +72,12 @@ export default function SearchBar({ initialQuery }: { initialQuery: string }) {
         style={{
           padding: "10px 12px",
           borderRadius: 10,
-          border: "1px solid rgba(255,255,255,0.2)",
-          background: "transparent",
+          border: "2px solid rgba(0, 89, 65, 0.2)",
+          background: "rgba(106, 137, 128, 0.1)",
           cursor: "pointer",
         }}
       >
-        Explore!
+        Search
       </button>
     </div>
   );

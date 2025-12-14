@@ -22,8 +22,9 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
 });
 
+
 export const metadata = {
-  title: "SB Serves",
+  title: "sb serves",
   description: "Find trusted UCSB student services",
 };
 

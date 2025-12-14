@@ -42,7 +42,7 @@ export default async function SearchPage({
     <main className="min-h-screen bg-neutral-50">
       <div className="mx-auto max-w-[1600px] px-4 py-6">
 
-        {/* 🔍 SEARCH BAR */}
+        {/* SEARCH BAR */}
         <div className="mb-6">
           <SearchBar initialQuery={q} />
         </div>
