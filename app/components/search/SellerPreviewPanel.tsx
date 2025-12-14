@@ -41,18 +41,7 @@ export default function SellerPreviewPanel({
 
       {seller.bio && <p className="text-neutral-700">{seller.bio}</p>}
 
-      {seller.services?.length ? (
-        <div className="flex flex-wrap gap-2">
-          {seller.services.map((service) => (
-            <span
-              key={service}
-              className="rounded-full bg-emerald-50 px-3 py-1 text-sm text-emerald-700"
-            >
-              {service}
-            </span>
-          ))}
-        </div>
-      ) : null}
+      
 
       {/* Simple profile link */}
       {igHandle ? (
