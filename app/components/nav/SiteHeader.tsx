@@ -1,6 +1,7 @@
 "use client"; /* for interactivity */
 
 import Link from "next/link";
+import SignOutButton from "@/app/components/seller/auth/SignOutButton";
 import { useEffect, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 const supabase = createSupabaseBrowserClient();
@@ -61,6 +62,9 @@ export default function SiteHeader() {
               Seller portal
             </Link>
           )}
+
+          {loggedIn && <SignOutButton />}
+
 
           <Link
             href="/issue"

@@ -21,7 +21,7 @@ export default function SignOutButton() {
     router.refresh();
 
     // Optional: send them to home
-    router.push("/");
+    router.replace("/");
   }
 
   return (
