@@ -66,6 +66,7 @@ export default function DashboardClient({
 
   const [name, setName] = useState(initialProfile?.name ?? "");
   const [bio, setBio] = useState(initialProfile?.bio ?? "");
+  const [instagramHandle, setInstagramHandle] = useState(initialProfile?.instagram_handle ?? "");
   const [servicesCsv, setServicesCsv] = useState(
     normalizeServices(initialProfile?.services).join(", ")
   );
@@ -106,6 +107,7 @@ export default function DashboardClient({
         id: userId,
         name: name.trim() || null,
         bio: bio.trim() || null,
+        instagramHandle: instagramHandle.trim() || null,
         services: services.length ? services : null,
         location_text: location.trim() || null,
         price_start: priceStart || null,
@@ -204,7 +206,7 @@ export default function DashboardClient({
             </label>
 
             <label className="block">
-                <div className="mb-2 text-sm font-medium" text-zinc-800>Bio</div>
+                <div className="mb-2 text-sm font-medium text-zinc-800">Bio</div>
                 <textarea
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
@@ -214,7 +216,17 @@ export default function DashboardClient({
             </label>
 
             <label className="block">
-                <div className="mb-2 text-sm font-medium" text-zinc-800>Services (comma-separated)</div>
+                <div className="mb-2 text-sm font-medium text-zinc-800">Instagram handle</div>
+                <textarea
+                value={instagramHandle}
+                onChange={(e) => setInstagramHandle(e.target.value)}
+                className="min-h-[120px] w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
+                placeholder="joes_killer_cuts"
+                />
+            </label>
+
+            <label className="block">
+                <div className="mb-2 text-sm font-medium text-zinc-800">Services (comma-separated)</div>
                 <textarea
                 value={servicesCsv.replace(/"/g, '')}
                 onChange={(e) => setServicesCsv(e.target.value)}
@@ -224,7 +236,7 @@ export default function DashboardClient({
             </label>
 
             <label className="block">
-                <div className="mb-2 text-sm font-medium" text-zinc-800>Location</div>
+                <div className="mb-2 text-sm font-medium text-zinc-800">Location</div>
                 <textarea
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
@@ -234,7 +246,7 @@ export default function DashboardClient({
             </label>
 
             <label className="block">
-                <div className="mb-2 text-sm font-medium" text-zinc-800>Starting price</div>
+                <div className="mb-2 text-sm font-medium text-zinc-800">Starting price</div>
                 <textarea
                 value={priceStart}
                 onChange={(e) => setPrice(e.target.value)}
@@ -244,7 +256,7 @@ export default function DashboardClient({
             </label>
 
             <label className="block">
-                <div className="mb-2 text-sm font-medium" text-zinc-800>URLs of Instagram posts to feature (comma-separated, 6 max)</div>
+                <div className="mb-2 text-sm font-medium text-zinc-800">URLs of Instagram posts to feature (comma-separated, 6 max)</div>
                 <textarea
                 value={instagramUrls}
                 onChange={(e) => setInstagramUrls(e.target.value)}

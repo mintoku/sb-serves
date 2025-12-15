@@ -19,9 +19,9 @@ export default function SellerCard({ seller }: { seller: Seller }) {
     <article className="rounded-2xl border bg-white p-4 shadow-sm transition hover:shadow-md">
       <div className="flex gap-4">
         {/* Avatar (placeholder for now) */}
-        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-neutral-200">
+        <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-amber-50">
           {/* Later: you can swap this for a real image */}
-          <div className="flex h-full w-full items-center justify-center text-xs text-neutral-500">
+          <div className="flex h-full w-full items-center justify-center text-xs text-amber-600">
             SB
           </div>
         </div>

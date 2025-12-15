@@ -1,5 +1,5 @@
 "use client"; /* for interactivity */
-/* top of page */
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -28,8 +28,8 @@ export default function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur">
-      <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4">
-        {/* Brand */}
+      <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-1">
+        {/* sb serves! */}
         <Link
           href="/"
           className="text-2xl tracking-wide text-cyan-900 font-semibold hover:text-black p-3 border-1 border-cyan-100 bg-blue-50 rounded-lg"
