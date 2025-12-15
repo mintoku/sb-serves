@@ -105,6 +105,7 @@ export default function SignInPage() {
               {status}
             </p>
           )}
+          
 
           <button
             onClick={sendMagicLink}

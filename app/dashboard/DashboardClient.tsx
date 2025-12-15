@@ -16,6 +16,7 @@ type SellerProfile = {
   portfolio_url: string | null;
 };
 
+
 function normalizeServices(services: unknown): string[] {
   // already an array
   if (Array.isArray(services)) return services.filter((x): x is string => typeof x === "string");
@@ -47,6 +48,7 @@ function normalizeServices(services: unknown): string[] {
 
   return [];
 }
+
 
 
 export default function DashboardClient({
@@ -89,6 +91,10 @@ export default function DashboardClient({
 
 
   async function handleSave() {
+    if (!name.trim()) {
+      setStatus("Name is required.");
+      return;
+    }
     setSaving(true);
     setStatus(null);
 
@@ -130,7 +136,41 @@ export default function DashboardClient({
 
     router.replace("/signin");
     setSaving(false);
+
   }
+    // Delete button UI state (optional; you can also just use window.confirm)
+    const [deleting, setDeleting] = useState(false);
+
+    async function handleDeleteAccount() {
+        const ok = window.confirm(
+        "This will permanently delete your account. This cannot be undone. Continue?"
+        );
+        if (!ok) return;
+
+        setDeleting(true);
+        setStatus(null);
+
+        const res = await fetch("/auth/delete-account", { method: "POST" });
+
+        // Protect against non-JSON responses
+        const text = await res.text();
+        let data: any = {};
+        try {
+        data = text ? JSON.parse(text) : {};
+        } catch {
+        // ignore, we'll handle below
+        }
+
+        if (!res.ok) {
+            setStatus(data.error || "Failed to delete account");
+            setDeleting(false);
+            return;
+        }
+        // also clear any client-side auth state
+        await supabase.auth.signOut();
+
+        window.location.href = "/";
+    }
 
   return (
     <section className="p-6 sm:p-10">
@@ -154,7 +194,7 @@ export default function DashboardClient({
 
         <div className="mt-8 space-y-5">
             <label className="block">
-                <div className="mb-2 text-sm font-medium" text-zinc-800>Name</div>
+                <div className="mb-2 text-sm font-medium text-zinc-800">Name</div>
                 <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -220,12 +260,21 @@ export default function DashboardClient({
             )}
 
             <button
-            onClick={handleSave}
-            disabled={saving}
-            className="w-full rounded-2xl bg-black px-4 py-3 text-white disabled:opacity-60"
-            >
+                onClick={handleSave}
+                disabled={saving}
+                className="w-full rounded-2xl bg-black px-4 py-3 text-white disabled:opacity-60"
+            >   
                 {saving ? "Saving..." : "Save changes"}
-                </button>
+            </button>
+
+            <button
+            onClick={handleDeleteAccount}
+            disabled={saving || deleting}
+            className="w-full rounded-2xl border border-red-300 bg-red-50 px-4 py-3 text-red-700 hover:bg-red-100 disabled:opacity-60"
+            >
+            {deleting ? "Deleting..." : "Delete account"}
+            </button>
+
         </div>
       </div>
     </section>
