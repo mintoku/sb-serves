@@ -12,21 +12,42 @@ type SellerProfile = {
   price_start: number | null;
   services: string[] | null;
   instagram_handle: string | null;
+  instagram_urls: string | null;
   portfolio_url: string | null;
 };
 
 function normalizeServices(services: unknown): string[] {
-  if (Array.isArray(services)) return services;
+  // already an array
+  if (Array.isArray(services)) return services.filter((x): x is string => typeof x === "string");
 
+  // string could be CSV OR JSON array string
   if (typeof services === "string") {
-    return services
+    const s = services.trim();
+
+    // If it looks like JSON array, parse it safely
+    if (s.startsWith("[") && s.endsWith("]")) {
+      try {
+        const parsed = JSON.parse(s);
+        if (Array.isArray(parsed)) {
+          return parsed
+            .map((x) => String(x).trim())
+            .filter(Boolean);
+        }
+      } catch {
+        // fall through to CSV parsing
+      }
+    }
+
+    // Otherwise treat as CSV
+    return s
       .split(",")
-      .map((s) => s.trim())
+      .map((x) => x.trim())
       .filter(Boolean);
   }
 
   return [];
 }
+
 
 export default function DashboardClient({
   userId,
@@ -48,21 +69,31 @@ export default function DashboardClient({
   );
   const [location, setLocation] = useState(initialProfile?.location_text ?? "");
   const [priceStart, setPrice] = useState(initialProfile?.price_start ?? "");
+  const [instagramUrls, setInstagramUrls] = useState(initialProfile?.instagram_urls ?? "");
+  
   const [status, setStatus] = useState<string | null>(initialError);
   const [saving, setSaving] = useState(false);
 
-  function parseServices(csv: string) {
-    return csv
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-  }
+    function parseServices(input: string) {
+        return normalizeServices(input);
+    }
+
+
+    function parseUrlsCsv(csv: string) {
+        return csv
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+            .slice(0, 6);
+    }
+
 
   async function handleSave() {
     setSaving(true);
     setStatus(null);
 
     const services = parseServices(servicesCsv);
+    const instagramPostUrls = parseUrlsCsv(instagramUrls);
 
     const { error } = await supabase.from("seller_profiles").upsert(
       {
@@ -70,6 +101,9 @@ export default function DashboardClient({
         name: name.trim() || null,
         bio: bio.trim() || null,
         services: services.length ? services : null,
+        location_text: location.trim() || null,
+        price_start: priceStart || null,
+        instagram_post_urls: instagramPostUrls || null,
       },
       { onConflict: "id" }
     );
@@ -142,7 +176,7 @@ export default function DashboardClient({
             <label className="block">
                 <div className="mb-2 text-sm font-medium" text-zinc-800>Services (comma-separated)</div>
                 <textarea
-                value={servicesCsv}
+                value={servicesCsv.replace(/"/g, '')}
                 onChange={(e) => setServicesCsv(e.target.value)}
                 className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
                 placeholder="Brow threading, brow waxing, etc..."
@@ -166,6 +200,16 @@ export default function DashboardClient({
                 onChange={(e) => setPrice(e.target.value)}
                 className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
                 placeholder="$10"
+                />
+            </label>
+
+            <label className="block">
+                <div className="mb-2 text-sm font-medium" text-zinc-800>URLs of Instagram posts to feature (comma-separated, 6 max)</div>
+                <textarea
+                value={instagramUrls}
+                onChange={(e) => setInstagramUrls(e.target.value)}
+                className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
+                placeholder="https://www.instagram.com/..., https://www.instagram.com/..."
                 />
             </label>
 

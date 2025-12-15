@@ -42,7 +42,7 @@ export default function SellerCard({ seller }: { seller: Seller }) {
                       key={service}
                       className="inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700"
                     >
-                      {service.replace(/[\[\]]/g,"")}
+                      {service.replace(/[\[\]"']/g, "")}
                     </span>
                   ))}
                 </div>
