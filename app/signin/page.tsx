@@ -1,35 +1,68 @@
+// app/signin/page.tsx
 "use client";
 
-import { useState } from "react";
-import { supabase } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+/**
+ * Magic Link Sign-In (Email Link)
+ * -------------------------------
+ * - User enters email
+ * - Supabase emails a clickable link
+ * - Link returns to /auth/callback where we exchange the "code" for a session cookie
+ *
+ * IMPORTANT:
+ * 1) You MUST have app/auth/callback/route.ts implemented (exchangeCodeForSession)
+ * 2) Supabase Auth URL settings must allow the redirect URL you use here
+ */
+
+import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+
+const supabase = createSupabaseBrowserClient();
 
 export default function SignInPage() {
-  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Step 1: email input
+  // If middleware sent them here with ?redirectTo=/dashboard, keep it
+  const redirectToParam = searchParams.get("redirectTo") || "/dashboard";
+
+  // Email input
   const [email, setEmail] = useState("");
 
-  // Step 2: 6-digit code input
-  const [code, setCode] = useState("");
-
   // UI state
-  const [step, setStep] = useState<"email" | "code">("email");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
 
-  async function sendCode() {
+  /**
+   * Decide the base URL we should use in the email redirect.
+   * - In production, set NEXT_PUBLIC_SITE_URL to https://yourdomain.com
+   * - In dev, fallback to the current site origin (window.location.origin)
+   */
+  const siteOrigin = useMemo(() => {
+    // Prefer your explicit env var in prod
+    if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+    // Fallback for local dev
+    if (typeof window !== "undefined") return window.location.origin;
+    // Server-side fallback (rarely used because this is a client component)
+    return "http://localhost:3000";
+  }, []);
+
+  async function sendMagicLink() {
     setLoading(true);
     setStatus(null);
 
     const cleanEmail = email.trim();
 
-    // Sends a 6-digit OTP (if your Supabase Email provider is set to OTP)
+    // The link in the email will land here:
+    // /auth/callback?redirectTo=/dashboard
+    const emailRedirectTo = `${siteOrigin}/auth/callback?redirectTo=${encodeURIComponent(
+      redirectToParam
+    )}`;
+
     const { error } = await supabase.auth.signInWithOtp({
       email: cleanEmail,
       options: {
-        // This helps ensure new sellers can be created automatically
         shouldCreateUser: true,
+        emailRedirectTo,
       },
     });
 
@@ -39,43 +72,10 @@ export default function SignInPage() {
       return;
     }
 
-    setStatus("Sent! Check your email for a 6-digit code ✉️");
-    setStep("code");
+    setStatus(
+      "Magic link sent! Check your email and click the link to sign in ✨"
+    );
     setLoading(false);
-  }
-
-  async function verifyCode() {
-    setLoading(true);
-    setStatus(null);
-
-    const cleanEmail = email.trim();
-    const cleanCode = code.replace(/\s+/g, ""); // remove spaces
-
-    // Verify 6-digit code
-    const { error } = await supabase.auth.verifyOtp({
-      email: cleanEmail,
-      token: cleanCode,
-      type: "email",
-    });
-
-    if (error) {
-      setStatus(error.message);
-      setLoading(false);
-      return;
-    }
-
-    setStatus("Signed in ✅ Redirecting…");
-
-    // Go to dashboard
-    router.push("/dashboard");
-    router.refresh();
-    setLoading(false);
-  }
-
-  async function goBack() {
-    setStatus(null);
-    setCode("");
-    setStep("email");
   }
 
   return (
@@ -86,9 +86,7 @@ export default function SignInPage() {
         </h1>
 
         <p className="mt-2 text-zinc-600">
-          {step === "email"
-            ? "Enter your email and we’ll send a 6-digit code."
-            : "Enter the 6-digit code we emailed you."}
+          Enter your email and we’ll send you a magic link to sign in.
         </p>
 
         <div className="mt-6 space-y-4">
@@ -99,20 +97,8 @@ export default function SignInPage() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@ucsb.edu"
             className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-            disabled={loading || step === "code"} // lock email once we move to code
+            disabled={loading}
           />
-
-          {/* Code input (only shows on step 2) */}
-          {step === "code" && (
-            <input
-              inputMode="numeric"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="123456"
-              className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2 tracking-widest"
-              disabled={loading}
-            />
-          )}
 
           {status && (
             <p className="rounded-2xl bg-zinc-50 px-4 py-3 text-sm text-zinc-700">
@@ -120,41 +106,18 @@ export default function SignInPage() {
             </p>
           )}
 
-          {step === "email" ? (
-            <button
-              onClick={sendCode}
-              disabled={loading || !email.trim()}
-              className="w-full rounded-2xl bg-black px-4 py-3 text-white disabled:opacity-60"
-            >
-              {loading ? "Sending…" : "Send 6-digit code"}
-            </button>
-          ) : (
-            <div className="space-y-3">
-              <button
-                onClick={verifyCode}
-                disabled={loading || code.replace(/\s+/g, "").length < 6}
-                className="w-full rounded-2xl bg-black px-4 py-3 text-white disabled:opacity-60"
-              >
-                {loading ? "Verifying…" : "Verify code"}
-              </button>
+          <button
+            onClick={sendMagicLink}
+            disabled={loading || !email.trim()}
+            className="w-full rounded-2xl bg-black px-4 py-3 text-white disabled:opacity-60"
+          >
+            {loading ? "Sending…" : "Send magic link"}
+          </button>
 
-              <button
-                onClick={sendCode}
-                disabled={loading}
-                className="w-full rounded-2xl border px-4 py-3 hover:bg-zinc-50 disabled:opacity-60"
-              >
-                Resend code
-              </button>
-
-              <button
-                onClick={goBack}
-                disabled={loading}
-                className="w-full rounded-2xl border px-4 py-3 hover:bg-zinc-50 disabled:opacity-60"
-              >
-                Use a different email
-              </button>
-            </div>
-          )}
+          <p className="text-xs text-zinc-500 leading-relaxed">
+            Tip: If you don’t see it, check spam/promotions. The link works best
+            when opened in the same browser.
+          </p>
         </div>
       </div>
     </section>

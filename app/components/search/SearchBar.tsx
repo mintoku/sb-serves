@@ -46,7 +46,7 @@ export default function SearchBar({ initialQuery }: { initialQuery: string }) {
         placeholder="Search services (nails, lashes), names, etc..."
         style={{
           width: "100%",
-          maxWidth: 520,
+          maxWidth: "80%",
           padding: "10px 12px",
           borderRadius: 10,
           border: "3px solid rgba(0, 89, 65, 0.2)",

@@ -9,15 +9,14 @@ export default function IssuePage() {
         </h1>
 
         <p className="mt-4 text-zinc-600 leading-relaxed">
-          I'm not surprised (lol). If something broke or looks off, please
-          email me at{" "}
+          If something broke or looks off, please email me at{" "}
           <a
             href="mailto:jovia@ucsb.edu"
             className="font-medium text-blue-600 hover:underline"
           >
             jovia@ucsb.edu
           </a>
-          .
+          . Thanks! 🙂
         </p>
       </div>
     </section>

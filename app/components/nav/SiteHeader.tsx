@@ -2,7 +2,8 @@
 /* top of page */
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase/client";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+const supabase = createSupabaseBrowserClient();
 
 export default function SiteHeader() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -50,14 +51,14 @@ export default function SiteHeader() {
               href="/dashboard"
               className="hover:text-black p-2 border-2 border-blue-50 bg-blue-50 rounded-lg"
             >
-              Dashboard
+              Seller Dashboard
             </Link>
           ) : (
             <Link
               href="/signin"
               className="hover:text-black p-2 border-2 border-blue-50 bg-blue-50 rounded-lg"
             >
-              Seller login / signup
+              Seller portal
             </Link>
           )}
 

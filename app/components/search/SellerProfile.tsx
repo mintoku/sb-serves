@@ -39,10 +39,17 @@ export default function SellerPreviewPanel({
     <div className="rounded-2xl border bg-white p-6 shadow-sm space-y-4">
       <h2 className="text-2xl font-semibold">{seller.name}</h2>
       
-      {seller.services && (
-        <span className="mt-2 inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
-          {seller.services}
-        </span>
+      {Array.isArray(seller.services) && seller.services.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {seller.services.map((service) => (
+            <span
+              key={service}
+              className="inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700"
+            >
+              {service.replace(/[\[\]"]/g,"")}
+            </span>
+          ))}
+        </div>
       )}
 
       {seller.locationText && (

@@ -10,8 +10,10 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/signin");
-
+  if (!user) {
+    console.log()
+    redirect("/signin");
+  }
   const { data: profile, error } = await supabase
     .from("seller_profiles")
     .select("*")
