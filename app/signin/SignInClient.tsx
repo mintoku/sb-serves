@@ -1,18 +1,6 @@
 // app/signin/SignInClient.tsx
 "use client";
 
-/**
- * Magic Link Sign-In (Email Link)
- * -------------------------------
- * - User enters email
- * - Supabase emails a clickable link
- * - Link returns to /auth/callback where we exchange the "code" for a session cookie
- *
- * IMPORTANT:
- * 1) You MUST have app/auth/callback/route.ts implemented (exchangeCodeForSession)
- * 2) Supabase Auth URL settings must allow the redirect URL you use here
- */
-
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -38,13 +26,8 @@ export default function SignInClient() {
    * - In dev, fallback to the current site origin (window.location.origin)
    */
   const siteOrigin = useMemo(() => {
-    // Prefer your explicit env var in prod
-    if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
-    // Fallback for local dev
-    if (typeof window !== "undefined") return window.location.origin;
-    // Server-side fallback (rarely used because this is a client component)
-      return "http://localhost:3000";
-    }, []);
+    process.env.NEXT_PUBLIC_SITE_URL;
+  }, []);
 
   async function sendMagicLink() {
     setLoading(true);
