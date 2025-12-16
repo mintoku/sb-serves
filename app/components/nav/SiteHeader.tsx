@@ -29,19 +29,21 @@ export default function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur">
-      <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-1">
+      <div className="mx-auto flex h-16 sm:h-20 max-w-6xl items-center justify-between px-4 sm:px-6">
+        
+        {/* Brand */}
         <Link
           href="/"
-          className="text-2xl tracking-wide text-cyan-900 font-semibold hover:text-black p-3 border-1 border-cyan-100 bg-blue-50 rounded-lg"
+          className="text-lg sm:text-2xl tracking-wide text-cyan-900 font-semibold hover:text-black px-3 py-2 bg-blue-50 rounded-lg"
         >
           sb serves
         </Link>
 
-        {/* Nav links */}
-        <nav className="flex items-center gap-5 text-sm text-neutral-700">
+        {/* Desktop nav */}
+        <nav className="hidden sm:flex items-center gap-4 text-sm text-neutral-700">
           <Link
             href="/search"
-            className="hover:text-black p-2 border-2 border-blue-50 bg-blue-50 rounded-lg"
+            className="hover:text-black px-3 py-2 bg-blue-50 rounded-lg"
           >
             Explore sellers
           </Link>
@@ -49,22 +51,40 @@ export default function SiteHeader() {
           {loggedIn ? (
             <Link
               href="/dashboard"
-              className="hover:text-black p-2 border-2 border-blue-50 bg-blue-50 rounded-lg"
+              className="hover:text-black px-3 py-2 bg-blue-50 rounded-lg"
             >
               Seller Dashboard
             </Link>
           ) : (
             <Link
               href="/signin"
-              className="hover:text-black p-2 border-2 border-blue-50 bg-blue-50 rounded-lg"
+              className="hover:text-black px-3 py-2 bg-blue-50 rounded-lg"
             >
               Seller portal
             </Link>
           )}
 
           {loggedIn && <SignOutButton />}
-
         </nav>
+
+        {/* Mobile primary action */}
+        <div className="sm:hidden">
+          {loggedIn ? (
+            <Link
+              href="/dashboard"
+              className="text-sm px-3 py-2 bg-blue-50 rounded-lg"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <Link
+              href="/signin"
+              className="text-sm px-3 py-2 bg-blue-50 rounded-lg"
+            >
+              Sign in
+            </Link>
+          )}
+        </div>
       </div>
     </header>
   );
