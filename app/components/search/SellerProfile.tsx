@@ -54,13 +54,11 @@ export default function SellerProfile({
 
 
       <div className="grid grid-cols-3 gap-4 items-center">
-        {seller.locationText && (
-          <div className="col-span-2">
+        <div className="col-span-2">
             <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-600">
-              📍 {seller.locationText}
+              {seller.locationText ? `📍 ${seller.locationText}` : "📍"}
             </span>
           </div>
-        )}
 
         {typeof seller.priceStart === "number" && (
           <div className="text-right">

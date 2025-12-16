@@ -1,1 +1,1 @@
-For UCSB students looking for aesthetic services from other gauchos. For finding the hidden talent of gaucho haircutters, nail techs, eyebrow threaders, lash experts and more!
+For UCSB students to discover other students' services. See it deployed here: sbserves.com
