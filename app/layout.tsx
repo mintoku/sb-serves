@@ -26,7 +26,7 @@ const playfair = Playfair_Display({
 
 export const metadata = {
   title: "sb serves",
-  description: "UCSB service marketplace. Find trusted UCSB student services. For UCSB students looking for aesthetic services from other gauchos. For finding the hidden talent of gaucho haircutters, nail techs, eyebrow threaders, lash experts and more!",
+  description: "UCSB service marketplace. Find trusted UCSB student services. For UCSB students looking for Gaucho haircutters, nail techs, eyebrow threaders, lash experts and more!",
 };
 
 export default function RootLayout({
