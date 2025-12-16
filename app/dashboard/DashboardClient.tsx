@@ -1,6 +1,8 @@
 "use client";
 
 import type { Seller } from "@/app/components/search/SearchShell";
+import TextareaField from "@/app/dashboard/TextareaField";
+
 
 function sellerProfileRowToSeller(row: SellerProfile | null): Seller | null {
   if (!row) return null;
@@ -168,8 +170,6 @@ export default function DashboardClient({
       });
   }
 
-
-
     setStatus(error ? error.message : "Saved");
     router.refresh();
     setSaving(false);
@@ -239,7 +239,7 @@ export default function DashboardClient({
                 <h1 className="text-2xl font-semibold tracking-tight sm:text-4xl">
                   Seller Dashboard
                 </h1>
-                <p className="mt-2 text-zinc-600">Edit your profile.</p>
+                <p className="mb-4 mt-2 text-zinc-600">Edit your profile.</p>
               </div>
 
               <button
@@ -250,92 +250,77 @@ export default function DashboardClient({
                 {saving ? "Signing out…" : "Sign out"}
               </button>
             </div>
+            <div className="lg:col-span-1">
+              <TextareaField
+              label="Your name"
+              value={name}
+              onChange={setName}
+              placeholder="Name"
+              maxChars={100}
+            />
 
-            <div className="mt-8 space-y-5">
-              <label className="block">
-                <div className="mb-2 text-sm font-medium text-zinc-800">Name</div>
-                <input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                  placeholder="Your name"
-                />
-              </label>
+            <TextareaField
+              label="Bio"
+              value={bio}
+              onChange={setBio}
+              placeholder="About you"
+              maxChars={100}
+              minHeight={60}
+            />
 
-              <label className="block">
-                <div className="mb-2 text-sm font-medium text-zinc-800">Bio</div>
-                <textarea
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                  className="min-h-[120px] w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                  placeholder="About you"
-                />
-              </label>
+            <TextareaField
+              label="Instagram handle"
+              value={instagramHandle}
+              onChange={setInstagramHandle}
+              placeholder="joes_killer_cuts"
+              maxChars={30}
+              minHeight={60}
+            />
+              
+            <TextareaField
+              label="Services (comma-separated list)"
+              value={servicesCsv.replace(/"/g, "")}
+              onChange={setServicesCsv}
+              placeholder="Brow threading, brow waxing, etc..."
+              maxChars={60}
+              minHeight={60}
+            />
 
-              <label className="block">
-                <div className="mb-2 text-sm font-medium text-zinc-800">
-                  Instagram handle
-                </div>
-                <input
-                  value={instagramHandle}
-                  onChange={(e) => setInstagramHandle(e.target.value)}
-                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                  placeholder="joes_killer_cuts"
-                />
-              </label>
+            <TextareaField
+              label="Location"
+              value={location}
+              onChange={setLocation}
+              placeholder="Isla Vista, Anacapa..."
+              maxChars={30}
+              minHeight={60}
+            />
 
-              <label className="block">
-                <div className="mb-2 text-sm font-medium text-zinc-800">
-                  Services (comma-separated)
-                </div>
-                <textarea
-                  value={servicesCsv.replace(/"/g, "")}
-                  onChange={(e) => setServicesCsv(e.target.value)}
-                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                  placeholder="Brow threading, brow waxing, etc..."
-                />
-              </label>
 
-              <label className="block">
-                <div className="mb-2 text-sm font-medium text-zinc-800">Location</div>
-                <input
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                  placeholder="Isla Vista, Anacapa..."
-                />
-              </label>
 
-              <label className="block">
-                <div className="mb-2 text-sm font-medium text-zinc-800">
-                  Starting price
-                </div>
-                <input
-                  value={priceStart}
-                  onChange={(e) => setPrice(e.target.value)}
-                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                  placeholder="10"
-                  inputMode="numeric"
-                />
-              </label>
+            <label className="block space-y-1 mb-8">
+              <div className="text-sm font-medium text-zinc-800">
+                Starting price
+              </div>
+              <input
+                value={priceStart}
+                onChange={(e) => setPrice(e.target.value)}
+                className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
+                placeholder="10"
+                inputMode="numeric"
+              />
+            </label>
 
-              <label className="block">
-                <div className="mb-2 text-sm font-medium text-zinc-800">
-                  URLs of Instagram posts to feature (comma-separated, 6 max)
-                </div>
-                <textarea
-                  value={instagramPostUrls}
-                  onChange={(e) => setInstagramPostUrls(e.target.value)}
-                  className="min-h-[96px] w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                  placeholder="https://www.instagram.com/..., https://www.instagram.com/..."
-                />
-                <p className="mt-2 text-xs text-zinc-500">
-                  Currently: {normalizeInstagramUrls(instagramPostUrls).length}/6 (If posts don't show up, refresh or double check your URLs)
-                </p>
-              </label>
+
+            <TextareaField
+              label="URLs of Instagram posts to feature (comma-separated, 6 max)"
+              value={instagramPostUrls}
+              onChange={setInstagramPostUrls}
+              placeholder="https://www.instagram.com/..., https://www.instagram.com/..."
+              minHeight={60}
+            />
 
               {status && (
-                <p className="rounded-2xl bg-zinc-50 px-4 py-3 text-sm text-zinc-700">
+                <p className="space-y-1 rounded-2xl bg-zinc-50 px-4 py-3 text-sm text-zinc-700">
                   {status}
                 </p>
               )}
@@ -343,7 +328,7 @@ export default function DashboardClient({
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="w-full rounded-2xl bg-black px-4 py-3 text-white disabled:opacity-60"
+                className="mt-8 w-full rounded-2xl bg-black px-4 py-3 text-white disabled:opacity-60"
               >
                 {saving ? "Saving..." : "Save changes"}
               </button>
@@ -351,14 +336,14 @@ export default function DashboardClient({
               <button
                 onClick={handleDeleteAccount}
                 disabled={saving || deleting}
-                className="w-full rounded-2xl border border-red-300 bg-red-50 px-4 py-3 text-red-700 hover:bg-red-100 disabled:opacity-60"
+                className="mt-3 w-full rounded-2xl border border-red-300 bg-red-50 px-4 py-3 text-red-700 hover:bg-red-100 disabled:opacity-60"
               >
                 {deleting ? "Deleting..." : "Delete account"}
               </button>
             </div>
           </div>
-        </div>
 
+        </div>
         {/* RIGHT: live preview */}
         <aside className="lg:col-span-1">
           <div className="sticky top-24">
