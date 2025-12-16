@@ -43,8 +43,8 @@ export default function SignInClient() {
     // Fallback for local dev
     if (typeof window !== "undefined") return window.location.origin;
     // Server-side fallback (rarely used because this is a client component)
-    return "http://localhost:3000";
-  }, []);
+      return "http://sbserves.com";
+    }, []);
 
   async function sendMagicLink() {
     setLoading(true);
