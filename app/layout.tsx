@@ -5,6 +5,8 @@
  */
 
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next"
+
 import SiteHeader from "@/app/components/nav/SiteHeader";
 import SiteFooter from "@/app/components/nav/SiteFooter";
 
