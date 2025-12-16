@@ -20,7 +20,6 @@ export default function SignOutButton() {
     // Re-run server components & middleware
     router.refresh();
 
-    // Optional: send them to home
     router.replace("/");
   }
 

@@ -77,7 +77,7 @@ export default function SellerProfile({
 
       
 
-      {/* Simple profile link */}
+      {/* insta profile link */}
       {igHandle ? (
         <a
           href={`https://instagram.com/${igHandle}`}

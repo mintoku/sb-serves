@@ -9,7 +9,6 @@ export async function GET(request: Request) {
 
     const supabase = createSupabaseServerClient();
 
-    // ⚠️ Make sure every column here actually exists in your table
     const { data, error } = await supabase.from("seller_profiles").select(`
       id,
       name,
@@ -29,6 +28,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    // map the database values to sellers
     const sellers = (data ?? []).map((row: any) => ({
       id: row.id,
       name: row.name,
@@ -48,7 +48,7 @@ export async function GET(request: Request) {
 
       instagramHandle: row.instagram_handle ?? undefined,
       instagramPostUrls: row.instagram_post_urls ?? [],
-      profilePic: row.profile_pic ?? undefined,
+      profilePic: row.profile_pic ?? undefined, // not implemented yet
     }));
 
     if (!q) return NextResponse.json({ sellers }, { status: 200 });

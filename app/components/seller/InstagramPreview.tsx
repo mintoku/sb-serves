@@ -88,7 +88,7 @@ export default function InstagramPreview({
                 }}
               >
                 <a href={url} target="_blank" rel="noreferrer">
-                  View this post on Instagram
+                  Preview loading
                 </a>
               </blockquote>
             </div>

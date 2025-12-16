@@ -4,8 +4,7 @@ import ListingCard from "@/app/components/search/SellerProfile";
 import { headers } from "next/headers"; /* to get host (www.example.com to build url later*/
 
 /**
- * Featured sellers section
- * - Reuses existing ListingCard
+ * Featured sellers section (reuses existing ListingCard)
  */
 export default async function FeaturedSellers({
   limit = 6,

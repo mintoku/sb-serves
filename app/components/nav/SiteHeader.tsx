@@ -10,12 +10,12 @@ export default function SiteHeader() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Initial session check
+    // initial session check
     supabase.auth.getSession().then(({ data }) => {
       setLoggedIn(!!data.session);
     });
 
-    // Listen for auth changes (login / logout)
+    // listen for login/logout
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setLoggedIn(!!session);
@@ -30,7 +30,6 @@ export default function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur">
       <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-1">
-        {/* sb serves! */}
         <Link
           href="/"
           className="text-2xl tracking-wide text-cyan-900 font-semibold hover:text-black p-3 border-1 border-cyan-100 bg-blue-50 rounded-lg"
@@ -44,7 +43,7 @@ export default function SiteHeader() {
             href="/search"
             className="hover:text-black p-2 border-2 border-blue-50 bg-blue-50 rounded-lg"
           >
-            Explore services
+            Explore sellers
           </Link>
 
           {loggedIn ? (

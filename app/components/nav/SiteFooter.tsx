@@ -6,12 +6,12 @@ export default function SiteFooter() {
     <footer className="border-t bg-white/80 backdrop-blur">
       <div className="mx-auto max-w-6xl px-4 py-8">
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-          {/* Left: brand */}
+          {/* left */}
           <p className="text-sm text-neutral-600">
             © {new Date().getFullYear()} sb serves
           </p>
 
-          {/* Right: links */}
+          {/* right (links) */}
           <nav className="flex items-center gap-4 text-sm">
             <Link
               href="/issue"
