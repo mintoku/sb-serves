@@ -25,9 +25,11 @@ export default function SignInClient() {
    * - In production, set NEXT_PUBLIC_SITE_URL to https://yourdomain.com
    * - In dev, fallback to the current site origin (window.location.origin)
    */
-  const siteOrigin = useMemo(() => {
-    process.env.NEXT_PUBLIC_SITE_URL;
-  }, []);
+  const siteOrigin =
+  typeof window !== "undefined"
+    ? window.location.origin
+    : process.env.NEXT_PUBLIC_SITE_URL ?? "https://sbserves.com";
+
 
   async function sendMagicLink() {
     setLoading(true);
