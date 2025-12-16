@@ -81,7 +81,7 @@ export default function SiteHeader() {
               href="/signin"
               className="text-sm px-3 py-2 bg-blue-50 rounded-lg"
             >
-              Sign in
+              Seller portal
             </Link>
           )}
         </div>
