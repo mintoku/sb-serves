@@ -1,7 +1,35 @@
 "use client";
 
+import type { Seller } from "@/app/components/search/SearchShell";
+
+function sellerProfileRowToSeller(row: SellerProfile | null): Seller | null {
+  if (!row) return null;
+
+  return {
+    id: row.id,
+    name: row.name ?? "Unnamed",
+    bio: row.bio ?? undefined,
+
+    services: Array.isArray(row.services)
+      ? row.services
+      : [],
+
+    locationText: row.location_text ?? undefined,
+    priceStart: row.price_start ?? undefined,
+
+    instagramHandle: row.instagram_handle ?? undefined,
+
+    instagramPostUrls: Array.isArray(row.instagram_post_urls)
+      ? row.instagram_post_urls
+      : [],
+  };
+}
+
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import SellerProfile from "@/app/components/search/SellerProfile";
+
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type SellerProfile = {
@@ -12,7 +40,7 @@ type SellerProfile = {
   price_start: number | null;
   services: string[] | null;
   instagram_handle: string | null;
-  instagram_urls: string | null;
+  instagram_post_urls: string | null;
   portfolio_url: string | null;
 };
 
@@ -63,6 +91,10 @@ export default function DashboardClient({
   const router = useRouter();
 
   const supabase = createSupabaseBrowserClient();
+  const [previewProfile, setPreviewProfile] = useState<SellerProfile | null>(
+    initialProfile
+  );
+
 
   const [name, setName] = useState(initialProfile?.name ?? "");
   const [bio, setBio] = useState(initialProfile?.bio ?? "");
@@ -72,7 +104,7 @@ export default function DashboardClient({
   );
   const [location, setLocation] = useState(initialProfile?.location_text ?? "");
   const [priceStart, setPrice] = useState(initialProfile?.price_start ?? "");
-  const [instagramUrls, setInstagramUrls] = useState(initialProfile?.instagram_urls ?? "");
+  const [instagramPostUrls, setInstagramPostUrls] = useState(initialProfile?.instagram_post_urls ?? "");
   
   const [status, setStatus] = useState<string | null>(initialError);
   const [saving, setSaving] = useState(false);
@@ -81,13 +113,20 @@ export default function DashboardClient({
         return normalizeServices(input);
     }
 
+    function normalizeInstagramUrls(
+      input: string | string[] | null
+    ): string[] {
+      if (!input) return [];
 
-    function parseUrlsCsv(csv: string) {
-        return csv
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean)
-            .slice(0, 6);
+      if (Array.isArray(input)) {
+        return input.filter(Boolean).slice(0, 6);
+      }
+
+      return input
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .slice(0, 6);
     }
 
 
@@ -100,21 +139,36 @@ export default function DashboardClient({
     setStatus(null);
 
     const services = parseServices(servicesCsv);
-    const instagramPostUrls = parseUrlsCsv(instagramUrls);
 
     const { error } = await supabase.from("seller_profiles").upsert(
-      {
+    {
+      id: userId,
+      name: name.trim() || null,
+      bio: bio.trim() || null,
+      instagram_handle: instagramHandle.trim() || null,
+      services: services.length ? services : null,
+      location_text: location.trim() || null,
+      price_start: priceStart ? Number(priceStart) : null, 
+      instagram_post_urls: normalizeInstagramUrls(instagramPostUrls) || null, 
+    },
+    
+    { onConflict: "id" },
+  );
+    if (!error) {
+      setPreviewProfile({
         id: userId,
         name: name.trim() || null,
         bio: bio.trim() || null,
-        instagramHandle: instagramHandle.trim() || null,
         services: services.length ? services : null,
         location_text: location.trim() || null,
-        price_start: priceStart || null,
-        instagram_post_urls: instagramPostUrls || null,
-      },
-      { onConflict: "id" }
-    );
+        price_start: priceStart ? Number(priceStart) : null,
+        instagram_handle: instagramHandle.trim() || null,
+        instagram_post_urls: instagramPostUrls,
+        portfolio_url: initialProfile?.portfolio_url ?? null,
+      });
+  }
+
+
 
     setStatus(error ? error.message : "Saved");
     router.refresh();
@@ -175,119 +229,142 @@ export default function DashboardClient({
     }
 
   return (
-    <section className="p-6 sm:p-10">
-      <div className="mx-auto max-w-3xl rounded-3xl border bg-white p-6 shadow-sm sm:p-10">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight sm:text-4xl">
-              Seller Dashboard
-            </h1>
-            <p className="mt-2 text-zinc-600">Edit your profile.</p>
-          </div>
+    <section className="mx-auto max-w-6xl px-4 py-8">
+      <div className="grid gap-5 lg:grid-cols-2">
+        {/* LEFT: dashboard/editor */}
+        <div className="lg:col-span-1">
+          <div className="rounded-3xl border bg-white p-6 shadow-sm sm:p-10">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-semibold tracking-tight sm:text-4xl">
+                  Seller Dashboard
+                </h1>
+                <p className="mt-2 text-zinc-600">Edit your profile.</p>
+              </div>
 
-          <button
-            onClick={handleSignOut}
-            disabled={saving}
-            className="rounded-2xl border px-4 py-2 text-sm hover:bg-zinc-50 disabled:opacity-60"
-          >
-            {saving ? "Signing out…" : "Sign out"}
-          </button>
-        </div>
+              <button
+                onClick={handleSignOut}
+                disabled={saving}
+                className="rounded-2xl border px-4 py-2 text-sm hover:bg-zinc-50 disabled:opacity-60"
+              >
+                {saving ? "Signing out…" : "Sign out"}
+              </button>
+            </div>
 
-        <div className="mt-8 space-y-5">
-            <label className="block">
+            <div className="mt-8 space-y-5">
+              <label className="block">
                 <div className="mb-2 text-sm font-medium text-zinc-800">Name</div>
                 <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                placeholder="Your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
+                  placeholder="Your name"
                 />
-            </label>
+              </label>
 
-            <label className="block">
+              <label className="block">
                 <div className="mb-2 text-sm font-medium text-zinc-800">Bio</div>
                 <textarea
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                className="min-h-[120px] w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                placeholder="About you"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  className="min-h-[120px] w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
+                  placeholder="About you"
                 />
-            </label>
+              </label>
 
-            <label className="block">
-                <div className="mb-2 text-sm font-medium text-zinc-800">Instagram handle</div>
+              <label className="block">
+                <div className="mb-2 text-sm font-medium text-zinc-800">
+                  Instagram handle
+                </div>
+                <input
+                  value={instagramHandle}
+                  onChange={(e) => setInstagramHandle(e.target.value)}
+                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
+                  placeholder="joes_killer_cuts"
+                />
+              </label>
+
+              <label className="block">
+                <div className="mb-2 text-sm font-medium text-zinc-800">
+                  Services (comma-separated)
+                </div>
                 <textarea
-                value={instagramHandle}
-                onChange={(e) => setInstagramHandle(e.target.value)}
-                className="min-h-[120px] w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                placeholder="joes_killer_cuts"
+                  value={servicesCsv.replace(/"/g, "")}
+                  onChange={(e) => setServicesCsv(e.target.value)}
+                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
+                  placeholder="Brow threading, brow waxing, etc..."
                 />
-            </label>
+              </label>
 
-            <label className="block">
-                <div className="mb-2 text-sm font-medium text-zinc-800">Services (comma-separated)</div>
-                <textarea
-                value={servicesCsv.replace(/"/g, '')}
-                onChange={(e) => setServicesCsv(e.target.value)}
-                className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                placeholder="Brow threading, brow waxing, etc..."
-                />
-            </label>
-
-            <label className="block">
+              <label className="block">
                 <div className="mb-2 text-sm font-medium text-zinc-800">Location</div>
-                <textarea
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                placeholder="Isla Vista, Anacapa..."
+                <input
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
+                  placeholder="Isla Vista, Anacapa..."
                 />
-            </label>
+              </label>
 
-            <label className="block">
-                <div className="mb-2 text-sm font-medium text-zinc-800">Starting price</div>
-                <textarea
-                value={priceStart}
-                onChange={(e) => setPrice(e.target.value)}
-                className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                placeholder="$10"
+              <label className="block">
+                <div className="mb-2 text-sm font-medium text-zinc-800">
+                  Starting price
+                </div>
+                <input
+                  value={priceStart}
+                  onChange={(e) => setPrice(e.target.value)}
+                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
+                  placeholder="10"
+                  inputMode="numeric"
                 />
-            </label>
+              </label>
 
-            <label className="block">
-                <div className="mb-2 text-sm font-medium text-zinc-800">URLs of Instagram posts to feature (comma-separated, 6 max)</div>
+              <label className="block">
+                <div className="mb-2 text-sm font-medium text-zinc-800">
+                  URLs of Instagram posts to feature (comma-separated, 6 max)
+                </div>
                 <textarea
-                value={instagramUrls}
-                onChange={(e) => setInstagramUrls(e.target.value)}
-                className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                placeholder="https://www.instagram.com/..., https://www.instagram.com/..."
+                  value={instagramPostUrls}
+                  onChange={(e) => setInstagramPostUrls(e.target.value)}
+                  className="min-h-[96px] w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
+                  placeholder="https://www.instagram.com/..., https://www.instagram.com/..."
                 />
-            </label>
-
-            {status && ( 
-                <p className="rounded-2xl bg-zinc-50 px-4 py-3 text-sm text-zinc-700"> 
-                {status} 
+                <p className="mt-2 text-xs text-zinc-500">
+                  Currently: {normalizeInstagramUrls(instagramPostUrls).length}/6 (If posts don't show up, refresh or double check your URLs)
                 </p>
-            )}
+              </label>
 
-            <button
+              {status && (
+                <p className="rounded-2xl bg-zinc-50 px-4 py-3 text-sm text-zinc-700">
+                  {status}
+                </p>
+              )}
+
+              <button
                 onClick={handleSave}
                 disabled={saving}
                 className="w-full rounded-2xl bg-black px-4 py-3 text-white disabled:opacity-60"
-            >   
+              >
                 {saving ? "Saving..." : "Save changes"}
-            </button>
+              </button>
 
-            <button
-            onClick={handleDeleteAccount}
-            disabled={saving || deleting}
-            className="w-full rounded-2xl border border-red-300 bg-red-50 px-4 py-3 text-red-700 hover:bg-red-100 disabled:opacity-60"
-            >
-            {deleting ? "Deleting..." : "Delete account"}
-            </button>
-
+              <button
+                onClick={handleDeleteAccount}
+                disabled={saving || deleting}
+                className="w-full rounded-2xl border border-red-300 bg-red-50 px-4 py-3 text-red-700 hover:bg-red-100 disabled:opacity-60"
+              >
+                {deleting ? "Deleting..." : "Delete account"}
+              </button>
+            </div>
+          </div>
         </div>
+
+        {/* RIGHT: live preview */}
+        <aside className="lg:col-span-1">
+          <div className="sticky top-24">
+            <SellerProfile seller={sellerProfileRowToSeller(previewProfile)} />
+          </div>
+        </aside>
       </div>
     </section>
   );

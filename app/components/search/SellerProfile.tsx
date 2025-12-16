@@ -3,7 +3,7 @@
 import type { Seller } from "./SearchShell";
 import InstagramPreview from "@/app/components/seller/InstagramPreview";
 
-export default function SellerPreviewPanel({
+export default function SellerProfile({
   seller,
 }: {
   seller: Seller | null;
@@ -52,13 +52,28 @@ export default function SellerPreviewPanel({
         </div>
       )}
 
-      {seller.locationText && (
-        <div className="mt-2">
-          <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-600">
-            📍 {seller.locationText}
-          </span>
-        </div>
-      )}
+
+      <div className="grid grid-cols-3 gap-4 items-center">
+        {seller.locationText && (
+          <div className="col-span-2">
+            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-600">
+              📍 {seller.locationText}
+            </span>
+          </div>
+        )}
+
+        {typeof seller.priceStart === "number" && (
+          <div className="text-right">
+            <div className="text-xl font-semibold text-emerald-700">
+              ${seller.priceStart}
+            </div>
+            <div className="text-xs text-neutral-500">starting price</div>
+          </div>
+        )}
+
+      
+      </div>
+      
 
       {seller.bio && <p className="text-neutral-700">{seller.bio}</p>}
 
