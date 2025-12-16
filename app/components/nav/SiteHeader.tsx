@@ -65,13 +65,6 @@ export default function SiteHeader() {
 
           {loggedIn && <SignOutButton />}
 
-
-          <Link
-            href="/issue"
-            className="hover:text-black p-2 border-2 border-blue-50 bg-blue-50 rounded-lg"
-          >
-            Report an issue
-          </Link>
         </nav>
       </div>
     </header>

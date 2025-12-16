@@ -44,7 +44,6 @@ export async function middleware(req: NextRequest) {
   return res;
 }
 
-// Apply middleware only where needed (recommended)
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/", "/dashboard/:path*"],
 };

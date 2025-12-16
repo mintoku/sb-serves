@@ -6,6 +6,8 @@
 
 import "./globals.css";
 import SiteHeader from "@/app/components/nav/SiteHeader";
+import SiteFooter from "@/app/components/nav/SiteFooter";
+
 import { Inter, Playfair_Display } from "next/font/google";
 
 // 1) Load fonts and attach them as CSS variables
@@ -35,6 +37,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-neutral-50 text-neutral-900 antialiased font-sans">
         <SiteHeader />
         {children}
+        <SiteFooter />
       </body>
     </html>
   );
