@@ -53,11 +53,12 @@ export default function WelcomeBack() {
   if (!name) return null;
 
   return (
-    <section className="rounded-2xl border bg-white-50 ml-0 m-8">
-      <h1 className="text-4xl font-semibold p-8 text-teal-600">
+    // rounded-3xl border bg-white p-6 shadow-sm sm:p-10
+    <section className="rounded-2xl border bg-white p-6 shadow-sm sm:p-10 mb-8">
+      <h1 className="text-4xl font-semibold mb-4 text-teal-600">
       Welcome back, {name}
     </h1>
-    <div className="ml-8 mb-8">
+    <div className="mt-7">
       Edit your page in
       <Link
         href="/dashboard"
