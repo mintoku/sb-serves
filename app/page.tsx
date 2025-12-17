@@ -2,6 +2,8 @@
 
 import SearchBar from "@/app/components/search/SearchBar";
 import FeaturedSellers from "@/app/components/home/FeaturedSellers";
+import WelcomeBack from "@/app/components/home/WelcomeBack";
+
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 
@@ -26,12 +28,7 @@ export default async function HomePage() {
   }
   return (
     <section className="px-4 py-8 sm:px-8 lg:px-20 sm:py-14">
-      {/* Greeting */}
-      {sellerName && (
-        <h2 className="mb-6 text-2xl sm:text-4xl font-semibold tracking-tight">
-          Welcome back, {sellerName}.
-        </h2>
-      )}
+      <WelcomeBack />
 
       <section className="space-y-8">
         {/* TOP: Search box */}
