@@ -74,7 +74,7 @@ export default function InstagramPreview({
       ) : (
         <div className="mt-4 grid grid-cols-1 gap-4">
           {posts.slice(0, 6).map((url) => (
-            <div key={url} className="overflow-hidden rounded-2xl">
+            <div key={url} className="overflow-hidden relative rounded-2xl">
               <blockquote
                 className="instagram-media"
                 data-instgrm-permalink={url}
@@ -88,7 +88,7 @@ export default function InstagramPreview({
                 }}
               >
                 <a href={url} target="_blank" rel="noreferrer">
-                  Preview loading
+                  Preview did not load. Click to see post directly
                 </a>
               </blockquote>
             </div>
