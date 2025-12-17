@@ -9,6 +9,8 @@ const supabase = createSupabaseBrowserClient();
 
 export default function WelcomeBack() {
   const [name, setName] = useState<string | null>(null);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [authEvent, setAuthEvent] = useState<string | null>(null);
 
   useEffect(() => {
     // Initial check

@@ -4,8 +4,20 @@ import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 
 export async function POST(req: NextRequest) {
-  // IMPORTANT: use a single response object so cookie writes aren't lost
-  const res = NextResponse.json({ success: true });
+  // Cookie collector response: Supabase will write cookies onto THIS
+  const cookieRes = new NextResponse(null);
+
+  // Helper: produce a JSON response AND copy cookies written to cookieRes
+  const respond = (body: any, status = 200) => {
+    const out = NextResponse.json(body, { status });
+
+    // copy cookies set during supabase calls
+    cookieRes.cookies.getAll().forEach((c) => {
+      out.cookies.set(c.name, c.value, c);
+    });
+
+    return out;
+  };
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,7 +27,7 @@ export async function POST(req: NextRequest) {
         getAll: () => req.cookies.getAll(),
         setAll: (cookiesToSet) => {
           cookiesToSet.forEach(({ name, value, options }) => {
-            res.cookies.set(name, value, options);
+            cookieRes.cookies.set(name, value, options);
           });
         },
       },
@@ -26,36 +38,40 @@ export async function POST(req: NextRequest) {
   const user = data?.user;
 
   if (userErr || !user) {
-    // return the SAME `res` so cookie updates (if any) are preserved
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    return respond({ error: "Not authenticated" }, 401);
   }
 
-  // 1) delete app data (profile row)
+  const userId = user.id;
+
+  // 1) delete app data
   const { error: profileErr } = await supabase
     .from("seller_profiles")
     .delete()
-    .eq("id", user.id);
+    .eq("id", userId);
 
   if (profileErr) {
-    return NextResponse.json({ error: profileErr.message }, { status: 500 });
+    return respond({ error: profileErr.message }, 500);
   }
 
-  // 2) delete auth user using service role (server-only)
+  // 2) clear cookies / sign out (so browser is definitely logged out)
+  // Even if the user is about to be deleted, we want cookies cleared.
+  const { error: signoutErr } = await supabase.auth.signOut();
+  if (signoutErr) {
+    // not always fatal, but it’s useful to know if it’s failing
+    return respond({ error: signoutErr.message }, 500);
+  }
+
+  // 3) delete auth user (service role)
   const admin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!, // server-only env var
+    process.env.SUPABASE_SERVICE_ROLE_KEY!, // ✅ server-only env var
     { auth: { persistSession: false } }
   );
 
-  const { error: delErr } = await admin.auth.admin.deleteUser(user.id);
+  const { error: delErr } = await admin.auth.admin.deleteUser(userId);
   if (delErr) {
-    return NextResponse.json({ error: delErr.message }, { status: 500 });
+    return respond({ error: delErr.message }, 500);
   }
 
-  // 3) clear session cookies
-  // Even if the user is deleted, this ensures your browser session is wiped.
-  await supabase.auth.signOut();
-
-  // return the response that contains the cookie deletions
-  return res;
+  return respond({ success: true }, 200);
 }

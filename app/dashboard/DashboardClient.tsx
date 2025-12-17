@@ -21,9 +21,7 @@ function sellerProfileRowToSeller(row: SellerProfile | null): Seller | null {
 
     instagramHandle: row.instagram_handle ?? undefined,
 
-    instagramPostUrls: Array.isArray(row.instagram_post_urls)
-      ? row.instagram_post_urls
-      : [],
+    instagramPostUrls: row.instagram_post_urls ?? [],
   };
 }
 
@@ -33,6 +31,7 @@ import { useRouter } from "next/navigation";
 import SellerProfile from "@/app/components/search/SellerProfile";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { start } from "node:repl";
 
 type SellerProfile = {
   id: string;
@@ -42,7 +41,7 @@ type SellerProfile = {
   price_start: number | null;
   services: string[] | null;
   instagram_handle: string | null;
-  instagram_post_urls: string | null;
+  instagram_post_urls: string[] | null;
   portfolio_url: string | null;
 };
 
@@ -106,8 +105,9 @@ export default function DashboardClient({
   );
   const [location, setLocation] = useState(initialProfile?.location_text ?? "");
   const [priceStart, setPrice] = useState(initialProfile?.price_start ?? "");
-  const [instagramPostUrls, setInstagramPostUrls] = useState(initialProfile?.instagram_post_urls ?? "");
-  
+const [instagramPostUrls, setInstagramPostUrls] = useState(
+  (initialProfile?.instagram_post_urls ?? []).join(", ")
+);  
   const [status, setStatus] = useState<string | null>(initialError);
   const [saving, setSaving] = useState(false);
 
@@ -137,10 +137,16 @@ export default function DashboardClient({
       setStatus("Name is required.");
       return;
     }
+    if (priceStart && !Number.isNaN(priceStart)) {
+      setStatus("Price must be a number");
+      return;
+    }
     setSaving(true);
     setStatus(null);
 
     const services = parseServices(servicesCsv);
+    
+    const normalizedPostUrls = normalizeInstagramUrls(instagramPostUrls);
 
     const { error } = await supabase.from("seller_profiles").upsert(
     {
@@ -151,7 +157,7 @@ export default function DashboardClient({
       services: services.length ? services : null,
       location_text: location.trim() || null,
       price_start: priceStart ? Number(priceStart) : null, 
-      instagram_post_urls: normalizeInstagramUrls(instagramPostUrls) || null, 
+      instagram_post_urls: normalizedPostUrls.length ? normalizedPostUrls : null,
     },
     
     { onConflict: "id" },
@@ -165,7 +171,7 @@ export default function DashboardClient({
         location_text: location.trim() || null,
         price_start: priceStart ? Number(priceStart) : null,
         instagram_handle: instagramHandle.trim() || null,
-        instagram_post_urls: instagramPostUrls,
+        instagram_post_urls: normalizedPostUrls.length ? normalizedPostUrls : null,
         portfolio_url: initialProfile?.portfolio_url ?? null,
       });
   }
@@ -194,38 +200,28 @@ export default function DashboardClient({
     setSaving(false);
 
   }
-    // Delete button UI state (optional; you can also just use window.confirm)
-    const [deleting, setDeleting] = useState(false);
 
     async function handleDeleteAccount() {
         const ok = window.confirm(
         "This will permanently delete your account. This cannot be undone. Continue?"
         );
         if (!ok) return;
-
-        setDeleting(true);
-        setStatus(null);
+  
 
         const res = await fetch("/auth/delete-account", { method: "POST" });
+        const data = await res.json();
 
-        // Protect against non-JSON responses
-        const text = await res.text();
-        let data: any = {};
-        try {
-        data = text ? JSON.parse(text) : {};
-        } catch {
-        // ignore, we'll handle below
-        }
-
-        if (!res.ok) {
+          if (!res.ok) {
             setStatus(data.error || "Failed to delete account");
-            setDeleting(false);
             return;
-        }
-        // also clear any client-side auth state
-        await supabase.auth.signOut();
+          }
 
-        window.location.href = "/";
+          // ensure client state + local session updates immediately
+          await supabase.auth.signOut();
+
+          // update any server components / header that depend on auth
+          router.push("/");
+          router.refresh();
     }
 
   return (
@@ -296,19 +292,14 @@ export default function DashboardClient({
             />
 
 
-
-            <label className="block space-y-1 mb-8">
-              <div className="text-sm font-medium text-zinc-800">
-                Starting price
-              </div>
-              <input
-                value={priceStart}
-                onChange={(e) => setPrice(e.target.value)}
-                className="w-full rounded-2xl border px-4 py-3 outline-none focus:ring-2"
-                placeholder="10"
-                inputMode="numeric"
-              />
-            </label>
+            <TextareaField
+              label="Starting price"
+              value={priceStart}
+              onChange={setPrice}
+              placeholder="10"
+              maxChars={5}
+              minHeight={60}
+            />
 
 
             <TextareaField
@@ -316,6 +307,7 @@ export default function DashboardClient({
               value={instagramPostUrls}
               onChange={setInstagramPostUrls}
               placeholder="https://www.instagram.com/..., https://www.instagram.com/..."
+              maxChars={400}
               minHeight={60}
             />
 
@@ -335,10 +327,8 @@ export default function DashboardClient({
 
               <button
                 onClick={handleDeleteAccount}
-                disabled={saving || deleting}
                 className="mt-3 w-full rounded-2xl border border-red-300 bg-red-50 px-4 py-3 text-red-700 hover:bg-red-100 disabled:opacity-60"
-              >
-                {deleting ? "Deleting..." : "Delete account"}
+              >Delete account
               </button>
             </div>
           </div>

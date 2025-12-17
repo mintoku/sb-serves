@@ -2,9 +2,8 @@
 
 type TextareaFieldProps = {
   label: string;
-  value: string;
-  onChange: (value: string) => void;
-
+  value: string | number;
+  onChange: (value) => void;
   placeholder?: string;
   maxChars?: number;
   minHeight?: number; // px
@@ -18,9 +17,8 @@ export default function TextareaField({
   maxChars,
   minHeight = 120,
 }: TextareaFieldProps) {
-  const remaining =
-    typeof maxChars === "number" ? maxChars - value.length : null;
-
+    const remaining =
+    typeof maxChars === "number" ? maxChars - value.toString().length : null;
   return (
     <label className="block space-y-1">
       {/* Label */}
