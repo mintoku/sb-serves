@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import Link from "next/link";
+
 
 const supabase = createSupabaseBrowserClient();
 
@@ -51,8 +53,18 @@ export default function WelcomeBack() {
   if (!name) return null;
 
   return (
-    <h1 className="text-xl font-semibold">
+    <section className="rounded-2xl border bg-white-50 ml-0 m-8">
+      <h1 className="text-4xl font-semibold p-8 text-teal-600">
       Welcome back, {name}
     </h1>
+    <div className="ml-8 mb-8">
+      Edit your page in
+      <Link
+        href="/dashboard"
+        className="text-sm px-3 py-2 m-2 text-blue-800 bg-blue-50 rounded-lg"
+      >Seller dashboard</Link> 
+    </div>
+    </section>
+    
   );
 }
