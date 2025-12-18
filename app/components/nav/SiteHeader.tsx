@@ -40,7 +40,6 @@ export default function SiteHeader() {
           sb serves
         </Link>
 
-        {/* Desktop nav ml-10 flex h-16 sm:h-20 max-w-6xl items-center justify-between p-4 sm:px-6*/}
         <nav className="hidden sm:flex items-center gap-4 text-sm text-neutral-700">
           <Link
             href="/search"
@@ -79,10 +78,10 @@ export default function SiteHeader() {
             </Link>
           ) : (
             <Link
-              href="/signin"
+              href="/search"
               className="text-sm px-3 py-2 bg-blue-50 rounded-lg"
             >
-              Seller portal
+              Explore sellers
             </Link>
           )}
         </div>
