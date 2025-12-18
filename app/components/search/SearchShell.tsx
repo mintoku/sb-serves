@@ -29,7 +29,7 @@ export default function SearchShell({ sellers }: { sellers: Seller[] }) {
   return (
     <div className="grid grid-cols-12 gap-6">
       {/* MIDDLE: results list */}
-      <div className="col-span-12 lg:col-span-6 space-y-4">
+      <div className="order-2 lg:order-1 col-span-12 lg:col-span-6 space-y-4">
         {sellers.map((seller) => (
           <button
             key={seller.id}
@@ -51,7 +51,7 @@ export default function SearchShell({ sellers }: { sellers: Seller[] }) {
       </div>
 
       {/* RIGHT: profile preview panel */}
-      <aside className="col-span-12 lg:col-span-6">
+      <aside className="order-1 lg:order-2 col-span-12 lg:col-span-6">
         <div className="sticky top-6">
           <SellerPreviewPanel seller={selectedSeller} />
         </div>

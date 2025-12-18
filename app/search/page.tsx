@@ -50,7 +50,7 @@ export default async function SearchPage({
 
   return (
     <main className="min-h-screen bg-neutral-50">
-      <div className="mx-auto max-w-[1600px] px-4 py-6">
+      <div className="mx-auto max-w-full px-4 py-6">
 
         {/* SEARCH BAR */}
         <div className="mb-6">
@@ -60,14 +60,14 @@ export default async function SearchPage({
         <div className="grid grid-cols-12 gap-6">
 
           {/* LEFT: Filters */}
-          <aside className="col-span-12 lg:col-span-3">
+          <aside className="hidden md:block max-w-[200px] md:max-w-[1600px] col-span-12 lg:col-span-3">
             <div className="sticky top-6">
               <FiltersPanel />
             </div>
           </aside>
 
           {/* RIGHT: Results */}
-          <section className="col-span-6 lg:col-span-9 space-y-4">
+          <section className="col-span-12 lg:col-span-9 space-y-4">
             <SearchShell sellers={sellers} />
           </section>
 
