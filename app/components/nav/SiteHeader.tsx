@@ -35,7 +35,7 @@ export default function SiteHeader() {
         <Link
           href="/"
           // "text-2xl font-semibold tracking-tight sm:text-4xl">
-          className="text-lg sm:text-2xl tracking-wide text-cyan-900 font-semibold hover:text-black px-3 py-2 bg-blue-50 rounded-lg"
+          className="text-lg sm:text-2xl tracking-wide text-cyan-900 font-semibold px-3 py-2 bg-blue-50 hover:bg-blue-100 rounded-lg"
         >
           sb serves
         </Link>
@@ -43,7 +43,7 @@ export default function SiteHeader() {
         <nav className="hidden sm:flex items-center gap-4 text-sm text-neutral-700">
           <Link
             href="/search"
-            className="hover:text-black px-3 py-2 bg-blue-50 rounded-lg"
+            className="hover:text-blue-800 hover:bg-blue-100 px-3 py-2 bg-blue-50 rounded-lg"
           >
             Explore sellers
           </Link>
@@ -51,14 +51,14 @@ export default function SiteHeader() {
           {loggedIn ? (
             <Link
               href="/dashboard"
-              className="hover:text-black px-3 py-2 bg-blue-50 rounded-lg"
+              className="hover:text-blue-800 hover:bg-blue-100 px-3 py-2 bg-blue-50 rounded-lg"
             >
               Seller Dashboard
             </Link>
           ) : (
             <Link
               href="/signin"
-              className="hover:text-black px-3 py-2 bg-blue-50 rounded-lg"
+              className="hover:text-blue-800 hover:bg-blue-100 px-3 py-2 bg-blue-50 rounded-lg"
             >
               Seller portal
             </Link>
