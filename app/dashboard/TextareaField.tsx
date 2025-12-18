@@ -20,7 +20,7 @@ export default function TextareaField({
     const remaining =
     typeof maxChars === "number" ? maxChars - value.toString().length : null;
   return (
-    <label className="block space-y-1">
+    <label className="block mt-4 space-y-1">
       {/* Label */}
       <div className="text-sm font-medium text-zinc-800">
         {label}
