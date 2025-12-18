@@ -60,7 +60,7 @@ export default async function SearchPage({
         <div className="grid grid-cols-12 gap-6">
 
           {/* LEFT: Filters */}
-          <aside className="hidden md:block max-w-[200px] md:max-w-[1600px] col-span-12 lg:col-span-3">
+          <aside className="md:block md:max-w-[1600px] col-span-12 lg:col-span-3">
             <div className="sticky top-6">
               <FiltersPanel />
             </div>
