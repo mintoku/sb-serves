@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function SiteFooter() {
   return (
     <footer className="border-t bg-white/80 backdrop-blur">
-      <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="mx-8 px-4 py-8">
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           {/* left */}
           <p className="text-sm text-neutral-600">
