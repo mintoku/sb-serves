@@ -52,15 +52,15 @@ export default function InstagramPreview({
     : undefined;
 
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-4">
+    <div className="rounded-2xl border border-neutral-200 bg-white p-1">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold">Instagram</h3>
+        <h3 className="text-base font-semibold pl-3 pt-3">Instagram</h3>
         {profileUrl && (
           <a
             href={profileUrl}
             target="_blank"
             rel="noreferrer"
-            className="text-sm font-medium text-emerald-600 hover:underline"
+            className="text-sm font-medium pr-3 pt-3 text-emerald-600 hover:underline"
           >
             View profile →
           </a>
