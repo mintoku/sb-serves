@@ -16,7 +16,7 @@ export default function SiteFooter() {
           <nav className="grid grid-rows-2 order-1 sm:order-2 flex items-center gap-4 mb-2 text-sm">
             <Link
               href="/signin"
-              className="hover:text-blue-800 hover:bg-blue-100 text-center p-3 bg-blue-50 rounded-lg"
+              className="block sm:hidden hover:text-blue-800 hover:bg-blue-100 text-center p-3 bg-blue-50 rounded-lg"
             >
               Seller portal
             </Link>
