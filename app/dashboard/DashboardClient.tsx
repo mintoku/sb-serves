@@ -247,7 +247,8 @@ const [instagramPostUrls, setInstagramPostUrls] = useState(
                 <h1 className="text-2xl font-semibold tracking-tight sm:text-4xl">
                   Seller Dashboard
                 </h1>
-                <p className="mb-4 mt-2 text-zinc-600">Edit your profile.</p>
+                <p className="mt-2 text-zinc-600">Edit your profile.</p>
+                <p className="text-xs mt-1.5 mb-4 text-zinc-600"> (Desktop suggested for best experience)</p>
               </div>
 
               <button
