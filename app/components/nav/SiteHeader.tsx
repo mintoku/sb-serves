@@ -29,17 +29,18 @@ export default function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur">
-      <div className="mx-auto flex h-16 sm:h-20 max-w-6xl items-center justify-between px-4 sm:px-6">
+      <div className="flex h-20 items-center justify-between px-6 sm:px-10 lg:px-14">
         
         {/* Brand */}
         <Link
           href="/"
+          // "text-2xl font-semibold tracking-tight sm:text-4xl">
           className="text-lg sm:text-2xl tracking-wide text-cyan-900 font-semibold hover:text-black px-3 py-2 bg-blue-50 rounded-lg"
         >
           sb serves
         </Link>
 
-        {/* Desktop nav */}
+        {/* Desktop nav ml-10 flex h-16 sm:h-20 max-w-6xl items-center justify-between p-4 sm:px-6*/}
         <nav className="hidden sm:flex items-center gap-4 text-sm text-neutral-700">
           <Link
             href="/search"

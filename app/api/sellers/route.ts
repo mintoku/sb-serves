@@ -2,14 +2,26 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+function parseCSV(value: string | null) {
+  if (!value) return [];
+  return value
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const q = (searchParams.get("q") ?? "").toLowerCase().trim();
+    const selectedServices = parseCSV(searchParams.get("services")).map((s) =>
+      s.toLowerCase()
+    );
 
     const supabase = createSupabaseServerClient();
 
-    const { data, error } = await supabase.from("seller_profiles").select(`
+    // Build query
+    let query = supabase.from("seller_profiles").select(`
       id,
       name,
       bio,
@@ -23,6 +35,17 @@ export async function GET(request: Request) {
       instagram_post_urls,
       profile_pic
     `);
+
+    if (selectedServices.length) {
+      // Build: services.ilike.%haircuts%,services.ilike.%nails%
+      const orClause = selectedServices
+        .map((s) => `services.ilike.%${s}%`)
+        .join(",");
+
+      query = query.or(orClause);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

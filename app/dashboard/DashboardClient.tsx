@@ -2,6 +2,7 @@
 
 import type { Seller } from "@/app/components/search/SearchShell";
 import TextareaField from "@/app/dashboard/TextareaField";
+import { SERVICE_OPTIONS } from "@/app/lib/services";
 
 
 function sellerProfileRowToSeller(row: SellerProfile | null): Seller | null {
@@ -100,9 +101,9 @@ export default function DashboardClient({
   const [name, setName] = useState(initialProfile?.name ?? "");
   const [bio, setBio] = useState(initialProfile?.bio ?? "");
   const [instagramHandle, setInstagramHandle] = useState(initialProfile?.instagram_handle ?? "");
-  const [servicesCsv, setServicesCsv] = useState(
-    normalizeServices(initialProfile?.services).join(", ")
-  );
+  // const [servicesCsv, setServicesCsv] = useState(
+  //   normalizeServices(initialProfile?.services).join(", ")
+  // );
   const [location, setLocation] = useState(initialProfile?.location_text ?? "");
   const [priceStart, setPrice] = useState(initialProfile?.price_start ?? "");
 const [instagramPostUrls, setInstagramPostUrls] = useState(
@@ -110,10 +111,20 @@ const [instagramPostUrls, setInstagramPostUrls] = useState(
 );  
   const [status, setStatus] = useState<string | null>(initialError);
   const [saving, setSaving] = useState(false);
+  const [selectedServices, setSelectedServices] = useState<string[]>(
+  // if you're loading an existing profile into the form:
+  Array.isArray(initialProfile?.services) ? initialProfile.services : []
+);
 
-    function parseServices(input: string) {
-        return normalizeServices(input);
+    function toggleService(service: string) {
+      setSelectedServices((prev) =>
+        prev.includes(service) ? prev.filter((s) => s !== service) : [...prev, service]
+      );
     }
+
+    // function parseServices(input: string) {
+    //     return normalizeServices(input);
+    // }
 
     function normalizeInstagramUrls(
       input: string | string[] | null
@@ -137,14 +148,15 @@ const [instagramPostUrls, setInstagramPostUrls] = useState(
       setStatus("Name is required.");
       return;
     }
-    if (priceStart && !Number.isNaN(priceStart)) {
+    if (priceStart && Number.isNaN(Number(priceStart))) {
       setStatus("Price must be a number");
       return;
     }
     setSaving(true);
     setStatus(null);
 
-    const services = parseServices(servicesCsv);
+    // const services = parseServices(servicesCsv);
+    const services = selectedServices;
     
     const normalizedPostUrls = normalizeInstagramUrls(instagramPostUrls);
 
@@ -157,7 +169,7 @@ const [instagramPostUrls, setInstagramPostUrls] = useState(
       services: services.length ? services : null,
       location_text: location.trim() || null,
       price_start: priceStart ? Number(priceStart) : null, 
-      instagram_post_urls: normalizedPostUrls.length ? normalizedPostUrls : null,
+      instagram_post_urls: normalizedPostUrls.length ? normalizedPostUrls : null, // if normalized posturls is nonzero, use it; otherwise its null
     },
     
     { onConflict: "id" },
@@ -273,14 +285,40 @@ const [instagramPostUrls, setInstagramPostUrls] = useState(
               minHeight={60}
             />
               
-            <TextareaField
+            {/* <TextareaField
               label="Services (comma-separated list)"
               value={servicesCsv.replace(/"/g, "")}
               onChange={setServicesCsv}
               placeholder="Brow threading, brow waxing, etc..."
               maxChars={60}
               minHeight={60}
-            />
+            /> */}
+
+            <div className="rounded-2xl border bg-white p-4 mt-3 mb-5">
+              <h3 className="text-sm font-semibold text-neutral-900">Services</h3>
+              <p className="mt-1 text-xs text-neutral-600">Select all that apply.</p>
+
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {SERVICE_OPTIONS.map((service) => {
+                  const checked = selectedServices.includes(service);
+                  return (
+                    <label
+                      key={service}
+                      className="flex items-center gap-2 rounded-xl border px-3 py-2 text-sm hover:border-neutral-400"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleService(service)}
+                        className="h-4 w-4"
+                      />
+                      <span className="text-neutral-800">{service}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
 
             <TextareaField
               label="Location"
