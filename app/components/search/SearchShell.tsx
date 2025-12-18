@@ -30,7 +30,18 @@ export default function SearchShell({ sellers }: { sellers: Seller[] }) {
     <div className="grid grid-cols-12 gap-6">
       {/* MIDDLE: results list */}
       <div className="order-2 lg:order-1 col-span-12 lg:col-span-6 space-y-4">
-        {sellers.map((seller) => (
+        {sellers.length === 0 ? (
+          <div className="rounded-2xl border border-dashed p-10 text-center text-neutral-600">
+            <p className="text-lg font-medium">
+              Sorry, no one offers this yet ☹️
+            </p>
+            <p className="mt-2 text-sm text-neutral-500">
+              Check back soon or try adjusting your filters.
+            </p>
+          </div>
+        ) : (
+        
+        sellers.map((seller) => (
           <button
             key={seller.id}
             type="button"
@@ -47,7 +58,8 @@ export default function SearchShell({ sellers }: { sellers: Seller[] }) {
               <SellerCard seller={seller} />
             </div>
           </button>
-        ))}
+        ))
+      )}
       </div>
 
       {/* RIGHT: profile preview panel */}
