@@ -39,6 +39,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-neutral-50 text-neutral-900 antialiased font-sans">
         <SiteHeader />
         {children}
+        <Analytics />
         <SiteFooter />
       </body>
     </html>

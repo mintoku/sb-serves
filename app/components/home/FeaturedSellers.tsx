@@ -7,7 +7,7 @@ import { headers } from "next/headers"; /* to get host (www.example.com to build
  * Featured sellers section (reuses existing ListingCard)
  */
 export default async function FeaturedSellers({
-  limit = 6,
+  limit = 12,
 }: {
   limit?: number;
 }) {
