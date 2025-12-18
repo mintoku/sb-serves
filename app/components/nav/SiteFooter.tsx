@@ -12,13 +12,21 @@ export default function SiteFooter() {
           </p>
 
           {/* right (links) */}
+          
           <nav className="flex items-center gap-4 text-sm">
+            <Link
+              href="/signin"
+              className="hover:text-black px-3 py-2 bg-blue-50 rounded-lg"
+            >
+              Seller portal
+            </Link>
             <Link
               href="/issue"
               className="hover:text-black p-2 border-2 border-red-50 bg-red-50 rounded-lg"
             >
               Report an issue
             </Link>
+            
           </nav>
         </div>
       </div>
