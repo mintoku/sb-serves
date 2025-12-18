@@ -36,7 +36,7 @@ export default function SearchShell({ sellers }: { sellers: Seller[] }) {
               Sorry, no one offers this yet ☹️
             </p>
             <p className="mt-2 text-sm text-neutral-500">
-              Check back soon or try adjusting your filters.
+              Do you? Add your service in Seller Portal!
             </p>
           </div>
         ) : (
