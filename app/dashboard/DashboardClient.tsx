@@ -265,7 +265,8 @@ const [instagramPostUrls, setInstagramPostUrls] = useState(
               value={name}
               onChange={setName}
               placeholder="Name"
-              maxChars={100}
+              maxChars={50}
+              minHeight={10}
             />
 
             <TextareaField
@@ -274,7 +275,7 @@ const [instagramPostUrls, setInstagramPostUrls] = useState(
               onChange={setBio}
               placeholder="About you"
               maxChars={100}
-              minHeight={60}
+              minHeight={110}
             />
 
             <TextareaField
@@ -337,7 +338,7 @@ const [instagramPostUrls, setInstagramPostUrls] = useState(
               onChange={setPrice}
               placeholder="10"
               maxChars={5}
-              minHeight={60}
+              minHeight={30}
             />
 
 
@@ -347,7 +348,7 @@ const [instagramPostUrls, setInstagramPostUrls] = useState(
               onChange={setInstagramPostUrls}
               placeholder="https://www.instagram.com/..., https://www.instagram.com/..."
               maxChars={400}
-              minHeight={60}
+              minHeight={130}
             />
 
               {status && (
