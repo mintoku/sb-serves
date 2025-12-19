@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import SignOutButton from "@/app/components/seller/auth/SignOutButton";
+import Container from "@/app/components/LayoutContainer";
+
 import { useEffect, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 const supabase = createSupabaseBrowserClient();
@@ -29,7 +31,8 @@ export default function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur">
-      <div className="flex h-20 items-center justify-between px-6 sm:px-10 lg:px-14">
+      <Container className="px-6 sm:px-10 lg:px-14">
+        <div className="flex items-start sm:items-center justify-between px-6 sm:px-10 lg:px-14 py-3 sm:py-4">
         
         {/* Brand */}
         <Link
@@ -40,10 +43,12 @@ export default function SiteHeader() {
           sb serves
         </Link>
 
-        <nav className="hidden sm:flex items-center gap-4 text-sm text-neutral-700">
+        <nav className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 text-sm text-neutral-700">
           <Link
             href="/search"
-            className="hover:text-blue-800 hover:bg-blue-100 px-3 py-2 bg-blue-50 rounded-lg"
+            className="w-full sm:w-auto
+                      hover:text-blue-800 hover:bg-blue-100
+                      px-3 py-2 bg-blue-50 rounded-lg"
           >
             Explore sellers
           </Link>
@@ -64,28 +69,16 @@ export default function SiteHeader() {
             </Link>
           )}
 
-          {loggedIn && <SignOutButton />}
+          {loggedIn && (
+            <div className="hidden sm:block">
+              <SignOutButton />
+            </div>)
+            }
         </nav>
 
-        {/* Mobile primary action */}
-        <div className="sm:hidden">
-          {loggedIn ? (
-            <Link
-              href="/dashboard"
-              className="text-sm px-3 py-2 bg-blue-50 rounded-lg"
-            >
-              Dashboard
-            </Link>
-          ) : (
-            <Link
-              href="/search"
-              className="text-sm px-3 py-2 bg-blue-50 rounded-lg"
-            >
-              Explore sellers
-            </Link>
-          )}
-        </div>
       </div>
+      </Container>
+      
     </header>
   );
 }

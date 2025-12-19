@@ -1,6 +1,7 @@
 // app/page.tsx
 
 import SearchBar from "@/app/components/search/SearchBar";
+import SignInButton from "@/app/components/seller/auth/SignInButton";
 import FeaturedSellers from "@/app/components/home/FeaturedSellers";
 import WelcomeBack from "@/app/components/home/WelcomeBack";
 
@@ -55,8 +56,12 @@ export default async function HomePage() {
           <p className="mt-3 text-sm text-zinc-600 leading-relaxed">
             If UCSB students know how to do one thing right, it's glowing up.
             From haircuts to nails, this is the best place for connecting talented
-            students with Gauchos looking for well-priced services.
+            students with Gauchos looking for well-priced services. Have a service to offer? Post it for free:
           </p>
+          <div className="flex justify-center items-center mt-3">
+            <SignInButton/>
+          </div>
+          
         </div>
 
         <FeaturedSellers limit={6} />

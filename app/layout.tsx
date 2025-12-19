@@ -9,6 +9,7 @@ import { Analytics } from "@vercel/analytics/next"
 
 import SiteHeader from "@/app/components/nav/SiteHeader";
 import SiteFooter from "@/app/components/nav/SiteFooter";
+import Container from "@/app/components/LayoutContainer";
 
 import { Inter, Playfair_Display } from "next/font/google";
 
@@ -38,7 +39,11 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <body className="min-h-screen bg-neutral-50 text-neutral-900 antialiased font-sans">
         <SiteHeader />
-        {children}
+        <main>
+          <Container className="px-6 sm:px-10 lg:px-14">
+            {children}
+          </Container>
+        </main>
         <Analytics />
         <SiteFooter />
       </body>

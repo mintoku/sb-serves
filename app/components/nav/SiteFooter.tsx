@@ -1,10 +1,12 @@
 // app/components/nav/SiteFooter.tsx
 import Link from "next/link";
+import Container from "@/app/components/LayoutContainer";
 
 export default function SiteFooter() {
   return (
     <footer className="border-t bg-white/80 backdrop-blur">
-      <div className="mx-8 px-4 py-8">
+      <Container className="px-6 sm:px-10 lg:px-14">
+        <div className="mx-8 px-4 py-8">
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           {/* left */}
           <p className="order-2 sm:order-1 text-sm text-neutral-600">
@@ -30,6 +32,8 @@ export default function SiteFooter() {
           </nav>
         </div>
       </div>
+      </Container>
+      
     </footer>
   );
 }
