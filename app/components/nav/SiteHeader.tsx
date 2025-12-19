@@ -32,7 +32,7 @@ export default function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur">
       <Container className="px-6 sm:px-10 lg:px-14">
-        <div className="flex items-start sm:items-center justify-between px-6 sm:px-10 lg:px-14 py-3 sm:py-4">
+        <div className="whitespace-nowrap flex-shrink-0 flex items-start sm:items-center justify-between px-6 sm:px-10 lg:px-14 py-3 sm:py-4">
         
         {/* Brand */}
         <Link
@@ -46,7 +46,7 @@ export default function SiteHeader() {
         <nav className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 text-sm text-neutral-700">
           <Link
             href="/search"
-            className="w-full sm:w-auto
+            className="whitespace-nowrap flex-shrink-0 w-full sm:w-auto
                       hover:text-blue-800 hover:bg-blue-100
                       px-3 py-2 bg-blue-50 rounded-lg"
           >
@@ -56,21 +56,21 @@ export default function SiteHeader() {
           {loggedIn ? (
             <Link
               href="/dashboard"
-              className="hover:text-blue-800 hover:bg-blue-100 px-3 py-2 bg-blue-50 rounded-lg"
+              className="whitespace-nowrap flex-shrink-0 hover:text-blue-800 hover:bg-blue-100 px-3 py-2 bg-blue-50 rounded-lg"
             >
               Seller Dashboard
             </Link>
           ) : (
             <Link
               href="/signin"
-              className="hover:text-blue-800 hover:bg-blue-100 px-3 py-2 bg-blue-50 rounded-lg"
+              className="whitespace-nowrap flex-shrink-0 hover:text-blue-800 hover:bg-blue-100 px-3 py-2 bg-blue-50 rounded-lg"
             >
               Seller portal
             </Link>
           )}
 
           {loggedIn && (
-            <div className="hidden sm:block">
+            <div className="whitespace-nowrap flex-shrink-0 hidden sm:block">
               <SignOutButton />
             </div>)
             }
