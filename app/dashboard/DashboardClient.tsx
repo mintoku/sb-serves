@@ -32,7 +32,6 @@ import { useRouter } from "next/navigation";
 import SellerProfile from "@/app/components/search/SellerProfile";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { start } from "node:repl";
 
 type SellerProfile = {
   id: string;
@@ -45,40 +44,6 @@ type SellerProfile = {
   instagram_post_urls: string[] | null;
   portfolio_url: string | null;
 };
-
-
-function normalizeServices(services: unknown): string[] {
-  // already an array
-  if (Array.isArray(services)) return services.filter((x): x is string => typeof x === "string");
-
-  // string could be CSV OR JSON array string
-  if (typeof services === "string") {
-    const s = services.trim();
-
-    // If it looks like JSON array, parse it safely
-    if (s.startsWith("[") && s.endsWith("]")) {
-      try {
-        const parsed = JSON.parse(s);
-        if (Array.isArray(parsed)) {
-          return parsed
-            .map((x) => String(x).trim())
-            .filter(Boolean);
-        }
-      } catch {
-        // fall through to CSV parsing
-      }
-    }
-
-    // Otherwise treat as CSV
-    return s
-      .split(",")
-      .map((x) => x.trim())
-      .filter(Boolean);
-  }
-
-  return [];
-}
-
 
 
 export default function DashboardClient({
@@ -122,10 +87,6 @@ const [instagramPostUrls, setInstagramPostUrls] = useState(
       );
     }
 
-    // function parseServices(input: string) {
-    //     return normalizeServices(input);
-    // }
-
     function normalizeInstagramUrls(
       input: string | string[] | null
     ): string[] {
@@ -155,7 +116,6 @@ const [instagramPostUrls, setInstagramPostUrls] = useState(
     setSaving(true);
     setStatus(null);
 
-    // const services = parseServices(servicesCsv);
     const services = selectedServices;
     
     const normalizedPostUrls = normalizeInstagramUrls(instagramPostUrls);

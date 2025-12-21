@@ -10,6 +10,7 @@ const SERVICE_OPTIONS = [
   { key: "brows", label: "Brows" },
   { key: "makeup", label: "Makeup" },
   { key: "tailor", label: "Tailor/hem" },
+  { key: "tanning", label: "Tanning" },
   { key: "food", label: "Food" },
   { key: "photography", label: "Photography" },
   { key: "cleaning", label: "Cleaning" },
@@ -80,11 +81,6 @@ export default function FiltersPanel() {
           ))}
         </div>
       </section>
-      
-
-
-
-
     </div>
   )
 }
