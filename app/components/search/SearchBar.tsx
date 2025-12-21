@@ -39,13 +39,14 @@ export default function SearchBar({ initialQuery }: { initialQuery: string }) {
   }
 
   return (
-    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+    <div style={{ display: "flex", gap: 8, alignItems: "center", width: "100%" }}>
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search services (nails, lashes), names, etc..."
         style={{
-          width: 500,
+          flex: 1,
+          minWidth: 0,
           maxWidth: "100%",
           padding: "10px 12px",
           borderRadius: 10,
