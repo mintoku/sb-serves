@@ -4,6 +4,7 @@ export const SERVICE_OPTIONS = [
   "Lashes",
   "Brows",
   "Makeup",
+  "Tailor/hem",
   "Food",
   "Photography",
   "Cleaning",

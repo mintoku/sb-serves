@@ -9,6 +9,7 @@ const SERVICE_OPTIONS = [
   { key: "lashes", label: "Lashes" },
   { key: "brows", label: "Brows" },
   { key: "makeup", label: "Makeup" },
+  { key: "tailor", label: "Tailor/hem" },
   { key: "food", label: "Food" },
   { key: "photography", label: "Photography" },
   { key: "cleaning", label: "Cleaning" },
